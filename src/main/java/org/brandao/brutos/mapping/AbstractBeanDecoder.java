@@ -139,7 +139,7 @@ public abstract class AbstractBeanDecoder
 		}
 		else
 		if(entity.getMetaBean() != null){
-			Object value = this.getValue(entity.getMetaBean(), path, node);
+			Object value = this.getValue(entity.getMetaBean(), null, path, node);
 			return entity.getType().convert(value);
 		}
 		else
