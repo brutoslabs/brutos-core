@@ -100,6 +100,10 @@ public class DefaultMvcRequest implements MutableMvcRequest {
 		return this.getValue(name, this.parameters);
 	}
 
+	public Object getParameterObject(String name) {
+		return this.getValue(name, this.parameters);
+	}
+	
 	public List<Object> getParameters(String name) {
 		return this.getValues(name, this.parameters);
 	}
