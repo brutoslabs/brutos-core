@@ -75,6 +75,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
 
 	void setViewResolver(ConfigurableViewResolver viewResolver);
 
+	void setMappingException(boolean mappingException);
+	
 	void setParent(ApplicationContext applicationContext);
 
 	void destroy();

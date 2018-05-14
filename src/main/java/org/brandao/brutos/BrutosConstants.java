@@ -91,6 +91,8 @@ public interface BrutosConstants {
 
 	final EnumerationType DEFAULT_ENUMERATIONTYPE = EnumerationType.ORDINAL;
 
+	final String MAPPING_EXCEPTION = "org.brandao.brutos.mapping.exception";
+	
 	final String FETCH_TYPE = "org.brandao.brutos.fetch_type";
 	
 	final String ACTION_TYPE = "org.brandao.brutos.action_strategy";
@@ -173,6 +175,8 @@ public interface BrutosConstants {
 	final String DEFAULT_CDI_BEAN_MANAGER = "java:comp/BeanManager";
 
 	final String DEFAULT_ACTION_TYPE_NAME = "parameter";
+
+	final String DEFAULT_MAPPING_EXCEPTION = "false";
 
 	final String DEFAULT_FETCH_TYPE_NAME = "eager";
 	

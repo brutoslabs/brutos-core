@@ -95,6 +95,8 @@ public abstract class AbstractApplicationContext
 
     protected FetchType fetchType;
     
+    protected boolean mappingException;
+    
 	public AbstractApplicationContext() {
 		this(null);
 	}
@@ -136,6 +138,7 @@ public abstract class AbstractApplicationContext
 		this.actionType                     = this.getInitActionType();
 		this.fetchType                      = this.getInitFetchType();
 		this.invoker						= this.getNewInvoker();
+		this.mappingException               = this.getInitMappingException();
 	}
 
 	protected void initInvoker(){
@@ -662,7 +665,22 @@ public abstract class AbstractApplicationContext
         catch( Exception e ){
             throw new BrutosException( e );
         }
-    }    
+    }
+    
+    protected boolean getInitMappingException(){
+        try{
+            Properties config = this.getConfiguration();
+            String value =
+                config.getProperty(
+            		BrutosConstants.MAPPING_EXCEPTION,
+            		BrutosConstants.DEFAULT_FETCH_TYPE_NAME);
+
+            return "true".equals(value);
+        }
+        catch( Exception e ){
+            throw new BrutosException( e );
+        }
+    }
 	public void destroy() {
 		this.objectFactory.destroy();
 		this.codeGenerator.destroy();
@@ -903,6 +921,14 @@ public abstract class AbstractApplicationContext
 		return this.requestParser;
 	}
 	
+	public boolean isMappingException() {
+		return mappingException;
+	}
+
+	public void setMappingException(boolean mappingException) {
+		this.mappingException = mappingException;
+	}
+
 	public Object getController(Class<?> clazz) {
 
 		Controller controller = controllerManager.getController(clazz);

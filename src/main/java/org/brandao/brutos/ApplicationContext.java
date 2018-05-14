@@ -96,6 +96,8 @@ public interface ApplicationContext {
 
 	TypeManager getTypeManager();
 
+	boolean isMappingException();
+	
 	ApplicationContext getParent();
 	
 }
