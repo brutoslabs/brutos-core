@@ -20,6 +20,7 @@ package org.brandao.brutos.validator;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,10 +31,10 @@ import javax.validation.ValidatorFactory;
 import javax.validation.Validation;
 import javax.validation.executable.ExecutableValidator;
 
-import org.brandao.brutos.BrutosConstants;
 import org.brandao.brutos.mapping.Action;
 import org.brandao.brutos.mapping.ConstructorArgBean;
 import org.brandao.brutos.mapping.ConstructorBean;
+import org.brandao.brutos.mapping.NameMapping;
 import org.brandao.brutos.mapping.ParameterAction;
 import org.brandao.brutos.mapping.PropertyBean;
 import org.brandao.brutos.mapping.PropertyController;
@@ -76,12 +77,7 @@ public class JSR303Validator implements Validator {
 			Set<ConstraintViolation<Object>> constraintViolations =
 				executableValidator.validateConstructorParameters(source.getContructor(), value);
 			
-			Map<String,String> map = new HashMap<String, String>();
-			
-			for(ConstructorArgBean arg: source.getConstructorArgs()){
-				map.put(arg.getRealName(), arg.getParameterName());
-			}
-			
+			Map<String,String> map = this.getNameMap(source.getConstructorArgs());
 			throwException(true, map, constraintViolations);
 		}
 		else{
@@ -103,13 +99,7 @@ public class JSR303Validator implements Validator {
 				executableValidator.validateConstructorReturnValue(source.getContructor(), value) : 
 				executableValidator.validateReturnValue(factoryInstance, method, value);
 				
-		Map<String,String> map = new HashMap<String, String>();
-		
-		for(ConstructorArgBean arg: source.getConstructorArgs()){
-			map.put(arg.getRealName(), arg.getParameterName());
-		}
-		
-		throwException(true, map, constraintViolations);
+		throwException(false, null, constraintViolations);
 	}
 
 	public void validate(PropertyBean source, Object beanInstance, Object value)
@@ -158,12 +148,7 @@ public class JSR303Validator implements Validator {
 			Set<ConstraintViolation<Object>> constraintViolations = 
 				executableValidator.validateParameters(controller, method, value);
 			
-			Map<String,String> map = new HashMap<String, String>();
-			
-			for(ParameterAction param: source.getParameters()){
-				map.put(param.getRealName(), param.getName());
-			}
-			
+			Map<String,String> map = this.getNameMap(source.getParameters());
 			throwException(true, map, constraintViolations);
 		}
 	}
@@ -183,11 +168,44 @@ public class JSR303Validator implements Validator {
 			Set<ConstraintViolation<Object>> constraintViolations = 
 				executableValidator.validateReturnValue(controller, method, value);
 			
-			Map<String,String> map = new HashMap<String, String>();
-			map.put(method.getName(), source.getName() == null? BrutosConstants.DEFAULT_RETURN_NAME : source.getName());
-			throwException(false, map, constraintViolations);
+			/*
+			Map<String,String> map = 
+					this.getNameMap(
+							method.getName(), 
+							source.getName() == null? 
+									BrutosConstants.DEFAULT_RETURN_NAME : 
+									source.getName()
+					);
+			*/
+			throwException(false, null, constraintViolations);
 		}
 	}
+	
+	private Map<String,String> getNameMap(List<? extends NameMapping> parameters){
+		Map<String,String> map = new HashMap<String, String>();
+		
+		int argIndex = 0;
+		for(NameMapping nameMapping: parameters){
+			if(nameMapping.getRealName().equals(nameMapping.getName())){
+				map.put("arg" + argIndex, nameMapping.getName());
+			}
+			else{
+				map.put(nameMapping.getRealName(), nameMapping.getName());				
+			}
+			
+			argIndex++;
+		}
+		
+		return map;
+	}
+	
+	/*
+	private Map<String,String> getNameMap(String realName, String name){
+		Map<String,String> map = new HashMap<String, String>();
+		map.put(realName, name);
+		return map;
+	}
+	*/
 	
 	@SuppressWarnings("unchecked")
 	protected void throwException(boolean ignoreRoot, Map<String,String> updateRoot,

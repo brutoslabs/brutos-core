@@ -28,7 +28,7 @@ import org.brandao.brutos.validator.Validator;
  * 
  * @author Brandao
  */
-public abstract class UseBeanData {
+public abstract class UseBeanData implements NameMapping{
 
 	protected String realName;
 	

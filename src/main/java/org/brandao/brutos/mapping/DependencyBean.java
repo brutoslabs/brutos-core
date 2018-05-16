@@ -29,7 +29,7 @@ import org.brandao.brutos.validator.Validator;
  * 
  * @author Brandao
  */
-public abstract class DependencyBean {
+public abstract class DependencyBean implements NameMapping{
 
 	protected String realName;
 	
@@ -69,6 +69,10 @@ public abstract class DependencyBean {
 		return realName;
 	}
 
+	public String getName() {
+		return this.parameterName;
+	}
+	
 	public void setRealName(String realName) {
 		this.realName = realName;
 	}
