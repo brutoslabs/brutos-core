@@ -124,128 +124,6 @@ public class Invoker {
 	public void setRequestParserListener(RequestParserListener requestParserListener) {
 		this.requestParserListener = requestParserListener;
 	}
-	
-	/* new */
-	
-	protected void resolveTypes(MutableMvcRequest request, 
-			MutableMvcResponse response) throws RequestTypeException{
-		
-		ResourceAction resourceAction = request.getResourceAction();
-		
-		if(!this.isSupportedRequestType(resourceAction, request)){
-			throw new RequestTypeException("request type not supported");
-		}
-
-		DataType responseDataType = this.selectResponseType(resourceAction, request);
-		
-		if(responseDataType == null){
-			throw new ResponseTypeException("response type not supported");
-		}
-
-		response.setType(responseDataType);
-		
-	}
-	
-	protected boolean resolveAction(MutableMvcRequest request, 
-			MutableMvcResponse response){
-		
-		if(request.getResourceAction() != null){
-			return true;
-		}
-		
-		ResourceAction resourceAction = 
-				actionResolver.getResourceAction(controllerManager, request);
-		
-		if(resourceAction == null){
-			return false;
-		}
-		
-		request.setResource(resourceAction.getController().getInstance(objectFactory));
-		request.setResourceAction(resourceAction);
-		
-		return true;
-	}
-	
-	protected void parseRequest(MutableMvcRequest request, MutableMvcResponse response){
-		MutableRequestParserEvent event = new MutableRequestParserEventImp();
-		event.setRequest(request);
-		event.setResponse(response);
-		
-		try{
-			this.requestParserListener.started(event);
-			this.requestParser.parserContentType(request, 
-					request.getType(), 
-					this.applicationContext.getConfiguration(), event, 
-					this.codeGenerator);
-		}
-		finally{
-			this.requestParserListener.finished(event);
-		}
-	}
-	
-	protected void updateRequest(MutableMvcRequest request, Controller controller, Object resource) 
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
-		List<PropertyController> properties = controller.getProperties();
-		
-		for(PropertyController property: properties){
-			
-			if(!property.canGet()){
-				continue;
-			}
-			
-			Object value = property.getValueFromSource(resource);
-			request.setProperty(property.getName(), value);
-		}
-		
-	}
-
-	/* /new */
-
-	public Object invoke(Controller controller, ResourceAction action,
-			Object resource, Object[] parameters) throws InvokerException{
-
-		if (controller == null)
-			throw new InvokerException("controller not found");
-
-		if (action == null)
-			throw new InvokerException("action not found");
-
-		MutableMvcRequest request   = new DefaultMvcRequest();
-		MutableMvcResponse response = new DefaultMvcResponse();
-		
-		request.setResource(resource);
-		request.setResourceAction(action);
-		request.setParameters(parameters);
-		
-		this.invoke(request, response);
-		return response.getResult();
-	}
-	
-	public Object invoke(Controller controller, ResourceAction action,
-			Object[] parameters) throws InvokerException{
-		return invoke(controller, action, null, parameters);
-	}
-
-	public Object invoke(Class<?> controllerClass, String actionId) {
-		Controller controller = 
-				applicationContext
-				.getControllerManager()
-				.getController(controllerClass);
-
-		ResourceAction resourceAction = 
-				actionResolver.getResourceAction(
-						controller, 
-						actionId, 
-						(MutableMvcRequest)RequestProvider.getRequest()
-				);
-		
-		if(resourceAction == null){
-			return false;
-		}
-		else{
-			return this.invoke(controller, resourceAction, null);
-		}
-	}
 
 	public RequestInstrument getRequestInstrument() {
 		Scopes scopes = applicationContext.getScopes();
@@ -267,6 +145,52 @@ public class Invoker {
 
 	public StackRequestElement getStackRequestElement() {
 		return getStackRequest().getCurrent();
+	}
+	
+	public Object invoke(Controller controller, ResourceAction action,
+			Object[] parameters) throws InvokerException{
+		return invoke(controller, action, null, parameters);
+	}
+	
+	public Object invoke(Controller controller, ResourceAction action,
+			Object resource, Object[] parameters) throws InvokerException{
+
+		if (controller == null)
+			throw new InvokerException("controller not found");
+
+		if (action == null)
+			throw new InvokerException("action not found");
+
+		MutableMvcRequest request   = new DefaultMvcRequest();
+		MutableMvcResponse response = new DefaultMvcResponse();
+		
+		request.setResource(resource);
+		request.setResourceAction(action);
+		request.setParameters(parameters);
+		
+		this.invoke(request, response);
+		return response.getResult();
+	}
+	
+	public Object invoke(Class<?> controllerClass, String actionId) {
+		Controller controller = 
+				applicationContext
+				.getControllerManager()
+				.getController(controllerClass);
+
+		ResourceAction resourceAction = 
+				actionResolver.getResourceAction(
+						controller, 
+						actionId, 
+						(MutableMvcRequest)RequestProvider.getRequest()
+				);
+		
+		if(resourceAction == null){
+			return false;
+		}
+		else{
+			return this.invoke(controller, resourceAction, null);
+		}
 	}
 
 	public boolean invoke(MutableMvcRequest request, MutableMvcResponse response) throws InvokerException{
@@ -321,6 +245,80 @@ public class Invoker {
 			currentApp.remove();			
 		}
 	}
+	
+	protected void resolveTypes(MutableMvcRequest request, 
+			MutableMvcResponse response) throws RequestTypeException{
+		
+		ResourceAction resourceAction = request.getResourceAction();
+		
+		if(!this.isSupportedRequestType(resourceAction, request)){
+			throw new RequestTypeException("request type not supported");
+		}
+
+		DataType responseDataType = this.selectResponseType(resourceAction, request);
+		
+		if(responseDataType == null){
+			throw new ResponseTypeException("response type not supported");
+		}
+
+		response.setType(responseDataType);
+		
+	}
+	
+	protected boolean resolveAction(MutableMvcRequest request, 
+			MutableMvcResponse response){
+		
+		if(request.getResourceAction() != null){
+			request.setResource(request.getResourceAction()
+					.getController().getInstance(objectFactory));
+			return true;
+		}
+		
+		ResourceAction resourceAction = 
+				actionResolver.getResourceAction(controllerManager, request);
+		
+		if(resourceAction == null){
+			return false;
+		}
+		
+		request.setResource(resourceAction.getController().getInstance(objectFactory));
+		request.setResourceAction(resourceAction);
+		
+		return true;
+	}
+	
+	protected void parseRequest(MutableMvcRequest request, MutableMvcResponse response){
+		MutableRequestParserEvent event = new MutableRequestParserEventImp();
+		event.setRequest(request);
+		event.setResponse(response);
+		
+		try{
+			this.requestParserListener.started(event);
+			this.requestParser.parserContentType(request, 
+					request.getType(), 
+					this.applicationContext.getConfiguration(), event, 
+					this.codeGenerator);
+		}
+		finally{
+			this.requestParserListener.finished(event);
+		}
+	}
+	
+	protected void updateRequest(MutableMvcRequest request, Controller controller, Object resource) 
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		List<PropertyController> properties = controller.getProperties();
+		
+		for(PropertyController property: properties){
+			
+			if(!property.canGet()){
+				continue;
+			}
+			
+			Object value = property.getValueFromSource(resource);
+			request.setProperty(property.getName(), value);
+		}
+		
+	}
 
 	protected void invokeApplication(
 			MutableMvcRequest request,
@@ -329,10 +327,6 @@ public class Invoker {
 			RequestInstrument requestInstrument
 			) throws Throwable{
 
-		//if(!this.resolveAction(request, response)){
-		//	return false;
-		//}
-			
 		this.resolveTypes(request, response);
 		
 		try{
@@ -373,9 +367,6 @@ public class Invoker {
     	
     	if(supportedRequestTypes.isEmpty()){
     		return true;
-    		//return 
-			//	request.getType() == null ||
-			//	this.requestParser.getDefaultParserType().equals(request.getType());
     	}
     	else{
     		return supportedRequestTypes.accept(request.getType());

@@ -44,11 +44,12 @@ public abstract class AbstractRequestParser
 			throws RequestParserException {
 		
 		if(dataType == null){
+			
+			if(this.defaultDataType == null){
+				return;
+			}
+				
 			dataType = this.defaultDataType;
-		}
-		
-		if(dataType == null){
-			return;
 		}
 		
 		ParserContentType parser = this.parsers.get(dataType);
