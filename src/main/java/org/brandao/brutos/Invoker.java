@@ -149,7 +149,9 @@ public class Invoker {
 	protected boolean resolveAction(MutableMvcRequest request, 
 			MutableMvcResponse response){
 		
-		request.setApplicationContext(this.applicationContext);
+		if(request.getResourceAction() != null){
+			return true;
+		}
 		
 		ResourceAction resourceAction = 
 				actionResolver.getResourceAction(controllerManager, request);
@@ -231,7 +233,11 @@ public class Invoker {
 				.getController(controllerClass);
 
 		ResourceAction resourceAction = 
-				actionResolver.getResourceAction(controller, actionId, null);
+				actionResolver.getResourceAction(
+						controller, 
+						actionId, 
+						(MutableMvcRequest)RequestProvider.getRequest()
+				);
 		
 		if(resourceAction == null){
 			return false;
@@ -265,6 +271,8 @@ public class Invoker {
 
 	public boolean invoke(MutableMvcRequest request, MutableMvcResponse response) throws InvokerException{
 
+		request.setApplicationContext(this.applicationContext);
+		
 		if(!this.resolveAction(request, response)){
 			return false;
 		}
