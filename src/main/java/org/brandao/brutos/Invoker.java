@@ -315,7 +315,22 @@ public class Invoker {
 			}
 			
 			Object value = property.getValueFromSource(resource);
+			
+			Scope scope = this.applicationContext.getScopes().get(property.getScopeType());
+			
+			if(scope == null){
+				throw new BrutosException("scope not found " + property.getScopeType());
+			}
+			
+			if(value != null){
+				scope.put(property.getName(), value);
+			}
+			else{
+				scope.remove(property.getName());
+			}
+			
 			request.setProperty(property.getName(), value);
+			
 		}
 		
 	}
