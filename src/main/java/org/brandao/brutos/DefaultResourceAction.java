@@ -82,7 +82,7 @@ public class DefaultResourceAction implements ResourceAction {
 	}
 
 	public DataTypeMap getResponseTypes(){
-		return this.action == null || this.action.getRequestTypes().isEmpty()? 
+		return this.action == null || this.action.getResponseTypes().isEmpty()? 
 				this.controller.getResponseTypes() : 
 				this.action.getResponseTypes();
 	}
