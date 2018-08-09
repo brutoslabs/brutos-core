@@ -152,7 +152,9 @@ public interface BrutosConstants {
 	
 	final String AUTO_VIEW_RESOLVER = "org.brandao.brutos.view.auto";
 
-	final String AUTO_THROW_MAPPING = "org.brandao.brutos.throw.auto";
+	final String AUTO_EXCEPTION_MAPPING = "org.brandao.brutos.exception.auto";
+
+	final String AUTO_PROPERTY_MAPPING = "org.brandao.brutos.property.auto";
 	
 	final String VIEW_RESOLVER_PREFIX = "org.brandao.brutos.view.prefix";
 

@@ -83,7 +83,9 @@ public abstract class AbstractApplicationContext
 	
 	protected boolean automaticViewResolver;
 
-	protected boolean automaticThrowMapping;
+	protected boolean automaticExceptionMapping;
+
+	protected boolean automaticPropertyMapping;
 	
 	protected EnumerationType enumerationType;
 	
@@ -130,7 +132,8 @@ public abstract class AbstractApplicationContext
 		this.requestParserListenerFactory	= this.getRequestParserListenerFactory();
 		this.dispatcherType                 = this.getInitDispatcherType();
 		this.automaticViewResolver          = this.getInitAutomaticViewResolver();
-		this.automaticThrowMapping          = this.getInitAutomaticThrowMapping();
+		this.automaticExceptionMapping      = this.getInitAutomaticExceptionMapping();
+		this.automaticPropertyMapping       = this.getInitAutomaticPropertyMapping();
 		this.enumerationType                = this.getInitEnumerationType();
 		this.scopeType                      = this.getInitScopeType();
 		this.temporalProperty               = this.getInitTemporalProperty();
@@ -516,12 +519,27 @@ public abstract class AbstractApplicationContext
         }
     }
 
-    protected boolean getInitAutomaticThrowMapping(){
+    protected boolean getInitAutomaticExceptionMapping(){
         try{
             Properties config = this.getConfiguration();
             String value =
                 config.getProperty(
-            		BrutosConstants.AUTO_THROW_MAPPING,
+            		BrutosConstants.AUTO_EXCEPTION_MAPPING,
+            		Boolean.FALSE.toString());
+
+            return Boolean.valueOf(value);
+        }
+        catch( Exception e ){
+            throw new BrutosException( e );
+        }
+    }
+
+    protected boolean getInitAutomaticPropertyMapping(){
+        try{
+            Properties config = this.getConfiguration();
+            String value =
+                config.getProperty(
+            		BrutosConstants.AUTO_PROPERTY_MAPPING,
             		Boolean.FALSE.toString());
 
             return Boolean.valueOf(value);
@@ -753,20 +771,28 @@ public abstract class AbstractApplicationContext
 		this.automaticViewResolver = value;
 	}
 
-	public void setAutomaticThrowMapping(boolean value) {
-		this.automaticThrowMapping = value;
+	public void setAutomaticPropertyMapping(boolean value) {
+		this.automaticViewResolver = value;
+	}
+	
+	public void setAutomaticExceptionMapping(boolean value) {
+		this.automaticExceptionMapping = value;
 	}
 	
 	public void setTemporalProperty(String value) {
 		this.temporalProperty = value;
 	}
 
+	public boolean isAutomaticPropertyMapping() {
+		return this.automaticPropertyMapping;
+	}
+	
 	public boolean isAutomaticViewResolver() {
 		return this.automaticViewResolver;
 	}
 
-	public boolean isAutomaticThrowMapping() {
-		return this.automaticThrowMapping;
+	public boolean isAutomaticExceptionMapping() {
+		return this.automaticExceptionMapping;
 	}
 	
 	public String getTemporalProperty() {

@@ -304,8 +304,9 @@ public class Invoker {
 		}
 	}
 	
-	protected void updateRequest(MutableMvcRequest request, Controller controller, Object resource) 
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	protected void updateRequest(Controller controller, Object resource,
+			MutableMvcRequest request) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		
 		List<PropertyController> properties = controller.getProperties();
 		
 		for(PropertyController property: properties){
@@ -328,13 +329,10 @@ public class Invoker {
 			else{
 				scope.remove(property.getName());
 			}
-			
-			request.setProperty(property.getName(), value);
-			
 		}
 		
 	}
-
+	
 	protected void invokeApplication(
 			MutableMvcRequest request,
 			MutableMvcResponse response,
@@ -370,7 +368,8 @@ public class Invoker {
 					throws IllegalAccessException, IllegalArgumentException, 
 					InvocationTargetException{
 		
-		this.updateRequest(request, element.getController(), element.getResource());
+		this.updateRequest(element.getController(), element.getResource(), request);
+		
 		renderView.show(request, response);
 		requestInstrument.setHasViewProcessed(true);
 		

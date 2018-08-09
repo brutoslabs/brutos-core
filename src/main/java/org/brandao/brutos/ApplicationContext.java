@@ -47,7 +47,9 @@ public interface ApplicationContext {
 	
 	boolean isAutomaticViewResolver();
 	
-	boolean isAutomaticThrowMapping();
+	boolean isAutomaticExceptionMapping();
+	
+	boolean isAutomaticPropertyMapping();
 	
     ScopeType getScopeType();
 	
