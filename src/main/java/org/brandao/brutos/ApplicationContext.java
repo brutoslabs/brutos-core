@@ -47,6 +47,8 @@ public interface ApplicationContext {
 	
 	boolean isAutomaticViewResolver();
 	
+	boolean isAutomaticThrowMapping();
+	
     ScopeType getScopeType();
 	
     FetchType getFetchType();
@@ -96,8 +98,6 @@ public interface ApplicationContext {
 
 	TypeManager getTypeManager();
 
-	boolean isMappingException();
-	
 	ApplicationContext getParent();
 	
 }

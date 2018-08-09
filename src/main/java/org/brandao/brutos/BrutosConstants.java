@@ -91,8 +91,6 @@ public interface BrutosConstants {
 
 	final EnumerationType DEFAULT_ENUMERATIONTYPE = EnumerationType.ORDINAL;
 
-	final String MAPPING_EXCEPTION = "org.brandao.brutos.mapping.exception";
-	
 	final String FETCH_TYPE = "org.brandao.brutos.fetch_type";
 	
 	final String ACTION_TYPE = "org.brandao.brutos.action_strategy";
@@ -154,6 +152,8 @@ public interface BrutosConstants {
 	
 	final String AUTO_VIEW_RESOLVER = "org.brandao.brutos.view.auto";
 
+	final String AUTO_THROW_MAPPING = "org.brandao.brutos.throw.auto";
+	
 	final String VIEW_RESOLVER_PREFIX = "org.brandao.brutos.view.prefix";
 
 	final String VIEW_RESOLVER_SUFFIX = "org.brandao.brutos.view.suffix";

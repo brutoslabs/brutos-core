@@ -41,6 +41,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
     
 	void setAutomaticViewResolver(boolean value);
 	
+	void setAutomaticThrowMapping(boolean value);
+	
 	void setRequestParser(ConfigurableRequestParser value);
 
     void setRequestType(DataType value);
@@ -75,8 +77,6 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
 
 	void setViewResolver(ConfigurableViewResolver viewResolver);
 
-	void setMappingException(boolean mappingException);
-	
 	void setParent(ApplicationContext applicationContext);
 
 	void destroy();

@@ -82,6 +82,8 @@ public abstract class AbstractApplicationContext
 	protected DispatcherType dispatcherType;
 	
 	protected boolean automaticViewResolver;
+
+	protected boolean automaticThrowMapping;
 	
 	protected EnumerationType enumerationType;
 	
@@ -94,8 +96,6 @@ public abstract class AbstractApplicationContext
     protected ActionType actionType;
 
     protected FetchType fetchType;
-    
-    protected boolean mappingException;
     
 	public AbstractApplicationContext() {
 		this(null);
@@ -130,15 +130,14 @@ public abstract class AbstractApplicationContext
 		this.requestParserListenerFactory	= this.getRequestParserListenerFactory();
 		this.dispatcherType                 = this.getInitDispatcherType();
 		this.automaticViewResolver          = this.getInitAutomaticViewResolver();
+		this.automaticThrowMapping          = this.getInitAutomaticThrowMapping();
 		this.enumerationType                = this.getInitEnumerationType();
 		this.scopeType                      = this.getInitScopeType();
 		this.temporalProperty               = this.getInitTemporalProperty();
-		this.automaticViewResolver          = this.getInitAutomaticViewResolver();
 		this.actionParameterName            = this.getInitActionParameterName();
 		this.actionType                     = this.getInitActionType();
 		this.fetchType                      = this.getInitFetchType();
 		this.invoker						= this.getNewInvoker();
-		this.mappingException               = this.getInitMappingException();
 	}
 
 	protected void initInvoker(){
@@ -517,6 +516,21 @@ public abstract class AbstractApplicationContext
         }
     }
 
+    protected boolean getInitAutomaticThrowMapping(){
+        try{
+            Properties config = this.getConfiguration();
+            String value =
+                config.getProperty(
+            		BrutosConstants.AUTO_THROW_MAPPING,
+            		Boolean.FALSE.toString());
+
+            return Boolean.valueOf(value);
+        }
+        catch( Exception e ){
+            throw new BrutosException( e );
+        }
+    }
+    
     protected EnumerationType getInitEnumerationType(){
         try{
             Properties config = this.getConfiguration();
@@ -667,20 +681,6 @@ public abstract class AbstractApplicationContext
         }
     }
     
-    protected boolean getInitMappingException(){
-        try{
-            Properties config = this.getConfiguration();
-            String value =
-                config.getProperty(
-            		BrutosConstants.MAPPING_EXCEPTION,
-            		BrutosConstants.DEFAULT_FETCH_TYPE_NAME);
-
-            return "true".equals(value);
-        }
-        catch( Exception e ){
-            throw new BrutosException( e );
-        }
-    }
 	public void destroy() {
 		this.objectFactory.destroy();
 		this.codeGenerator.destroy();
@@ -753,6 +753,10 @@ public abstract class AbstractApplicationContext
 		this.automaticViewResolver = value;
 	}
 
+	public void setAutomaticThrowMapping(boolean value) {
+		this.automaticThrowMapping = value;
+	}
+	
 	public void setTemporalProperty(String value) {
 		this.temporalProperty = value;
 	}
@@ -761,6 +765,10 @@ public abstract class AbstractApplicationContext
 		return this.automaticViewResolver;
 	}
 
+	public boolean isAutomaticThrowMapping() {
+		return this.automaticThrowMapping;
+	}
+	
 	public String getTemporalProperty() {
 		return this.temporalProperty;
 	}
@@ -921,14 +929,6 @@ public abstract class AbstractApplicationContext
 		return this.requestParser;
 	}
 	
-	public boolean isMappingException() {
-		return mappingException;
-	}
-
-	public void setMappingException(boolean mappingException) {
-		this.mappingException = mappingException;
-	}
-
 	public Object getController(Class<?> clazz) {
 
 		Controller controller = controllerManager.getController(clazz);
