@@ -14,14 +14,21 @@ public class ResultActionBuilder
 	
 	private ActionBuilder actionBuilder;
 	
+	private ThrowSafeBuilder throwSafeBuilder;
+	
+	private ControllerBuilder controllerBuilder;
+	
 	public ResultActionBuilder(
+			ControllerBuilder controllerBuilder,
 			ActionBuilder actionBuilder,
+			ThrowSafeBuilder throwSafeBuilder,
 			org.brandao.brutos.mapping.ResultAction resultAction, 
 			ValidatorFactory validatorFactory) {
-		super(resultAction.getValidate().getConfiguration());
+		super(resultAction.getValidate().getConfiguration(), actionBuilder == null? throwSafeBuilder : actionBuilder);
 		this.resultAction = resultAction;
 		this.validatorFactory = validatorFactory;
 		this.actionBuilder = actionBuilder;
+		this.controllerBuilder = controllerBuilder;
 	}
 
 	public MetaBeanBuilder buildMetaBean(String name, Class<?> classType) {
@@ -68,7 +75,7 @@ public class ResultActionBuilder
 		MetaBeanBuilder builder = new MetaBeanBuilder(metaBean, name, scope,
 				enumProperty, temporalProperty, classType, type,
 				this.validatorFactory,
-				this.actionBuilder.getControllerBuilder(),
+				this.controllerBuilder,
 				this.resultAction.getName());
 
 		return builder;
@@ -77,4 +84,9 @@ public class ResultActionBuilder
 	public ActionBuilder getActionBuilder(){
 		return this.actionBuilder;
 	}
+
+	public ThrowSafeBuilder getThrowSafeBuilder() {
+		return throwSafeBuilder;
+	}
+	
 }

@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import org.brandao.brutos.mapping.Action;
 import org.brandao.brutos.mapping.Controller;
 import org.brandao.brutos.mapping.DataTypeMap;
+import org.brandao.brutos.mapping.ThrowableSafeData;
 
 /**
  * 
@@ -76,15 +77,61 @@ public class DefaultResourceAction implements ResourceAction {
 	}
 
 	public DataTypeMap getRequestTypes(){
-		return this.action == null || this.action.getRequestTypes().isEmpty()? 
-				this.controller.getRequestTypes() : 
-				this.action.getRequestTypes();
+		
+		if(this.action == null){
+			//Significa que não foi selecionada uma ação
+			//Deve ser usado os tipos do controlador.
+			return this.controller.getRequestTypes();
+		}
+		
+		if(this.action.getRequestTypes().isEmpty()){
+			//Indica que a ação não possui tipos predefinidos
+			//Vai ocorrer a tentativa de obter os tipos da execução anterior
+			
+			if(this.action instanceof ThrowableSafeData){
+				//indica que é uma exceção se comportando como uma ação.
+				//no mínimo, sempre existirá uma chamada na pilha.
+				
+				//Obtém a execução anterior
+				StackRequestElement sre = 
+						Invoker.getInstance()
+							.getStackRequestElement()
+							.getPreviousStackRequestElement();
+				
+				//Obtém o tipo da requisição anterior
+				DataTypeMap dtm = sre.getRequest().getResourceAction().getRequestTypes();
+				
+				return dtm;
+			}
+			
+			return this.controller.getRequestTypes();
+		}
+		
+		return this.action.getRequestTypes();
 	}
 
 	public DataTypeMap getResponseTypes(){
-		return this.action == null || this.action.getResponseTypes().isEmpty()? 
-				this.controller.getResponseTypes() : 
-				this.action.getResponseTypes();
+		
+		if(this.action == null){
+			return this.controller.getResponseTypes();
+		}
+		
+		if(this.action.getResponseTypes().isEmpty()){
+			
+			if(this.action instanceof ThrowableSafeData){
+				StackRequestElement sre = 
+						Invoker.getInstance()
+							.getStackRequestElement()
+							.getPreviousStackRequestElement();
+				
+				DataTypeMap dtm = sre.getRequest().getResourceAction().getResponseTypes();
+				
+				return dtm;
+			}			
+			return this.controller.getResponseTypes();
+		}
+		
+		return this.action.getResponseTypes();
 	}
 	
 }

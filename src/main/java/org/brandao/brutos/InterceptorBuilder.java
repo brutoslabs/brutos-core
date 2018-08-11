@@ -23,7 +23,8 @@ import org.brandao.brutos.mapping.Interceptor;
  * 
  * @author Brandao
  */
-public class InterceptorBuilder {
+public class InterceptorBuilder 
+	implements ComponentBuilder{
 
 	private Interceptor interceptor;
 
@@ -38,5 +39,13 @@ public class InterceptorBuilder {
 	public InterceptorBuilder addParameter(String name, String value) {
 		interceptor.setProperty(name, value);
 		return this;
+	}
+
+	public InterceptorManager getManager() {
+		return manager;
+	}
+
+	public ComponentBuilder getParentBuilder() {
+		return null;
 	}
 }

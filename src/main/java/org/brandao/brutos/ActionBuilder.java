@@ -55,11 +55,13 @@ public class ActionBuilder extends RestrictionBuilder {
 				actionBuilder.applicationContext);
 	}
 
-	public ActionBuilder(Action action, Controller controller,
+	public ActionBuilder(
+			Action action, 
+			Controller controller,
 			ValidatorFactory validatorFactory,
 			ControllerBuilder controllerBuilder,
 			ConfigurableApplicationContext applicationContext) {
-		super(action.getResultValidator().getConfiguration());
+		super(action.getResultValidator().getConfiguration(), controllerBuilder);
 		this.controller = controller;
 		this.action = action;
 		this.validatorFactory = validatorFactory;
@@ -122,25 +124,32 @@ public class ActionBuilder extends RestrictionBuilder {
 		return this.parametersBuilder;
 	}
 
-	public ActionBuilder addThrowable(Class<?> target, String id) {
+	public ThrowSafeBuilder addThrowable(Class<?> target, String id) {
 		return addThrowable(target, null, false, id,
 				null);
 	}
 
-	public ActionBuilder addThrowable(Class<?> target, String view,
+	public ThrowSafeBuilder addThrowable(Class<?> target, String view,
 			boolean resolvedView, String id, DispatcherType dispatcher) {
 		return this.addThrowable(target, view, id, dispatcher, resolvedView);
 	}
 
-	public ActionBuilder addThrowable(Class<?> target, String view, String id,
+	public ThrowSafeBuilder addThrowable(Class<?> target, String view, String id,
 			DispatcherType dispatcher, boolean resolvedView) {
-		
-		view = StringUtil.adjust(view);
+		return this.addThrowable(target, null, view, dispatcher, resolvedView, null, false);
+	}
 
-		id = StringUtil.isEmpty(id)? BrutosConstants.DEFAULT_EXCEPTION_NAME : StringUtil.adjust(id);
+	public ThrowSafeBuilder addThrowable(Class<?> target, String executor, String view,
+			DispatcherType dispatcher, boolean resolvedView, String resultId, boolean resultRendered) {
 		
-		String originalView = view;
-
+		view              = StringUtil.adjust(view);
+		executor          = StringUtil.adjust(executor);
+		resultId          = StringUtil.adjust(resultId);
+		
+		resultId = StringUtil.isEmpty(resultId)? 
+				BrutosConstants.DEFAULT_EXCEPTION_NAME : 
+				resultId;
+		
 		view = resolvedView ? 
 				view : 
 				applicationContext.getViewResolver().getView(this.controllerBuilder, this, target, view);
@@ -154,6 +163,11 @@ public class ActionBuilder extends RestrictionBuilder {
 					+ controller.getClassType().getName());
 		}
 
+		if (StringUtil.isEmpty(view) && StringUtil.isEmpty(executor)){
+			throw new MappingException(
+					"view must be informed: " + target);
+		}
+		
 		if (!Throwable.class.isAssignableFrom(target)){
 			throw new MappingException("target is not allowed: "
 					+ target.getName());
@@ -165,16 +179,24 @@ public class ActionBuilder extends RestrictionBuilder {
 							+ target.getSimpleName());
 		}
 
-		ThrowableSafeData thr = new ThrowableSafeData();
-		thr.setParameterName(id);
+		ThrowableSafeData thr = new ThrowableSafeData(this.action);
+		thr.getAction().setId(new ActionID(target.getSimpleName()));
+		thr.getAction().setCode(Action.getNextId());
+		thr.getAction().setName(target.getSimpleName());
+		thr.getAction().setController(controller);
+		thr.getAction().setResultValidator(validatorFactory.getValidator(new Configuration()));
+		thr.getAction().setParametersValidator(validatorFactory.getValidator(new Configuration()));
+		thr.getAction().setView(view);
+		thr.getAction().setResolvedView(resolvedView);
+		thr.getAction().setDispatcherType(dispatcher);
+		thr.getAction().setReturnRendered(resultRendered);
+		thr.getAction().getResultAction().setName(resultId);
 		thr.setTarget(target);
-		thr.setView(view);
-		thr.setOriginalView(originalView);
-		thr.setResolvedView(resolvedView);
 		thr.setRedirect(false);
-		thr.setDispatcher(dispatcher);
 		this.action.setThrowsSafe(thr);
-		return this;
+		
+		return new ThrowSafeBuilder(thr, controller, validatorFactory, 
+				controllerBuilder, this, applicationContext);
 	}
 
 	public ControllerBuilder getControllerBuilder() {
@@ -488,11 +510,11 @@ public class ActionBuilder extends RestrictionBuilder {
 		}
 
 		action.setResultAction(resultAction);
-		return new ResultActionBuilder(this, resultAction, this.validatorFactory);
+		return new ResultActionBuilder(this.controllerBuilder, this, null, resultAction, this.validatorFactory);
 	}
 	
 	public ResultActionBuilder getResultAction(){
-		return new ResultActionBuilder(this, this.action.getResultAction(), this.validatorFactory);		
+		return new ResultActionBuilder(this.controllerBuilder, this, null, this.action.getResultAction(), this.validatorFactory);		
 	}
 	
 	/* setResultAction */

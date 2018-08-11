@@ -27,8 +27,9 @@ import org.brandao.brutos.validator.RestrictionRules;
  * 
  * @author Brandao
  */
-public class ParameterBuilder extends RestrictionBuilder implements
-		GenericBuilder {
+public class ParameterBuilder 
+	extends RestrictionBuilder 
+	implements GenericBuilder {
 
 	private ParameterAction parameter;
 
@@ -39,7 +40,7 @@ public class ParameterBuilder extends RestrictionBuilder implements
 	public ParameterBuilder(ParameterAction value,
 			ParametersBuilder parametersBuilder,
 			ValidatorFactory validatorFactory) {
-		super(value.getValidate().getConfiguration());
+		super(value.getValidate().getConfiguration(), parametersBuilder);
 		this.parameter = value;
 		this.parametersBuilder = parametersBuilder;
 		this.validatorFactory = validatorFactory;

@@ -24,11 +24,14 @@ import org.brandao.brutos.validator.RestrictionRules;
  * 
  * @author Brandao
  */
-public class RestrictionBuilder {
+public class RestrictionBuilder 
+	implements ComponentBuilder{
 
 	private Properties config;
 
-	public RestrictionBuilder(Properties config) {
+	private ComponentBuilder parent;
+	
+	public RestrictionBuilder(Properties config, ComponentBuilder parent) {
 		this.config = config;
 	}
 
@@ -41,6 +44,10 @@ public class RestrictionBuilder {
 	public RestrictionBuilder setMessage(String message) {
 		config.setProperty("message", message);
 		return this;
+	}
+
+	public ComponentBuilder getParentBuilder() {
+		return this.parent;
 	}
 
 }

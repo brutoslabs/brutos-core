@@ -26,7 +26,7 @@ import org.brandao.brutos.type.Type;
  * 
  * @author Brandao
  */
-public class BeanBuilder {
+public class BeanBuilder implements ComponentBuilder{
 
 	private Controller controller;
 
@@ -583,6 +583,10 @@ public class BeanBuilder {
 	protected Logger getLogger() {
 		return LoggerProvider.getCurrentLoggerProvider().getLogger(
 				ControllerBuilder.class);
+	}
+
+	public ComponentBuilder getParentBuilder() {
+		return this.controllerBuilder;
 	}
 
 }

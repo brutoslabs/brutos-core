@@ -69,7 +69,7 @@ public abstract class AbstractRenderView
 
 			if (throwableSafeData.getView() != null) {
 				this.showView(requestInstrument, throwableSafeData.getView(),
-						throwableSafeData.getDispatcher());
+						throwableSafeData.getDispatcherType());
 				return;
 			}
 		}

@@ -17,53 +17,24 @@
 
 package org.brandao.brutos.mapping;
 
-import org.brandao.brutos.DispatcherType;
-
 /**
  * 
  * @author Brandao
  */
 public class ThrowableSafeData {
 
-	private Class<?> target;
+	protected boolean redirect;
 
-	private String view;
-
-	private String originalView;
-
-	private boolean resolvedView;
-
-	private String parameterName;
-
-	private boolean redirect;
-
-	private DispatcherType dispatcher;
-
-	public ThrowableSafeData() {
-	}
-
-	public Class<?> getTarget() {
-		return target;
-	}
-
-	public void setTarget(Class<?> target) {
-		this.target = target;
-	}
-
-	public String getView() {
-		return view;
-	}
-
-	public void setView(String uri) {
-		this.view = uri;
-	}
-
-	public String getParameterName() {
-		return parameterName;
-	}
-
-	public void setParameterName(String parameterName) {
-		this.parameterName = parameterName;
+	protected Class<?> target;
+	
+	protected Action parent;
+	
+	protected Action action;
+	
+	public ThrowableSafeData(Action parent){
+		super();
+		this.parent = parent;
+		this.action = new Action();
 	}
 
 	public boolean isRedirect() {
@@ -74,28 +45,28 @@ public class ThrowableSafeData {
 		this.redirect = redirect;
 	}
 
-	public DispatcherType getDispatcher() {
-		return dispatcher;
+	public Class<?> getTarget() {
+		return target;
 	}
 
-	public void setDispatcher(DispatcherType dispatcher) {
-		this.dispatcher = dispatcher;
+	public void setTarget(Class<?> target) {
+		this.target = target;
 	}
 
-	public boolean isResolvedView() {
-		return resolvedView;
+	public Action getParent() {
+		return parent;
 	}
 
-	public void setResolvedView(boolean resolvedView) {
-		this.resolvedView = resolvedView;
+	public void setParent(Action parent) {
+		this.parent = parent;
 	}
 
-	public String getOriginalView() {
-		return originalView;
+	public Action getAction() {
+		return action;
 	}
 
-	public void setOriginalView(String originalView) {
-		this.originalView = originalView;
+	public void setAction(Action action) {
+		this.action = action;
 	}
-
+	
 }

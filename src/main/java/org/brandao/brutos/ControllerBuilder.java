@@ -52,7 +52,7 @@ import org.brandao.brutos.type.UnknownTypeException;
  * 
  * @author Brandao
  */
-public class ControllerBuilder {
+public class ControllerBuilder implements ComponentBuilder {
 
 	/*
 	 * O construtor somente pode possuir métodos que alteram 
@@ -141,61 +141,81 @@ public class ControllerBuilder {
 		return this;
 	}
 	
-	public ControllerBuilder addThrowable(Class<?> target, String id) {
+	public ThrowSafeBuilder addThrowable(Class<?> target, String id) {
 		return addThrowable(target, null, false, id,
 				null);
 	}
 
-	public ControllerBuilder addThrowable(Class<?> target, String view,
+	public ThrowSafeBuilder addThrowable(Class<?> target, String view,
 			boolean resolvedView, String id, DispatcherType dispatcher) {
 		return this.addThrowable(target, view, id, dispatcher, resolvedView);
 	}
 
-	public ControllerBuilder addThrowable(Class<?> target, String view,
+	public ThrowSafeBuilder addThrowable(Class<?> target, String view,
 			String id, DispatcherType dispatcher, boolean resolvedView) {
+		return this.addThrowable(target, null, view, 
+				dispatcher, resolvedView, null, false);
+	}
 
-		view = StringUtil.adjust(view);
+	public ThrowSafeBuilder addThrowable(Class<?> target, String executor, 
+			String view, DispatcherType dispatcher, 
+			boolean resolvedView, String resultId, boolean resultRendered) {
+		
+		view              = StringUtil.adjust(view);
+		executor          = StringUtil.adjust(executor);
+		resultId          = StringUtil.adjust(resultId);
+		
+		resultId = StringUtil.isEmpty(resultId)? 
+				BrutosConstants.DEFAULT_EXCEPTION_NAME : 
+					resultId;
 		
 		view = resolvedView ? 
 				view : 
 				applicationContext.getViewResolver().getView(this, null, target, view);
 
-		id = StringUtil.isEmpty(id)? BrutosConstants.DEFAULT_EXCEPTION_NAME : StringUtil.adjust(id);
-		
 		dispatcher = dispatcher == null? 
 				this.applicationContext.getDispatcherType() :
 				dispatcher;
 
 		if (target == null){
 			throw new MappingException("target is required: "
-					+ controller.getClassType().getSimpleName());
+					+ controller.getClassType().getName());
 		}
 
+		if (StringUtil.isEmpty(view) && StringUtil.isEmpty(executor)){
+			throw new MappingException(
+					"view must be informed: " + target);
+		}
+		
 		if (!Throwable.class.isAssignableFrom(target)){
 			throw new MappingException("target is not allowed: "
-					+ target.getSimpleName());
+					+ target.getName());
 		}
 
 		if (this.controller.getThrowsSafe(target) != null){
 			throw new MappingException(
-					"the exception has been added on controller: "
+					"the exception has been added on action: "
 							+ target.getSimpleName());
 		}
 
-		ThrowableSafeData thr = new ThrowableSafeData();
-		thr.setParameterName(id);
+		ThrowableSafeData thr = new ThrowableSafeData(null);
+		thr.getAction().setId(new ActionID(target.getSimpleName()));
+		thr.getAction().setCode(Action.getNextId());
+		thr.getAction().setName(target.getSimpleName());
+		thr.getAction().setController(controller);
+		thr.getAction().setResultValidator(validatorFactory.getValidator(new Configuration()));
+		thr.getAction().setParametersValidator(validatorFactory.getValidator(new Configuration()));
+		thr.getAction().setView(view);
+		thr.getAction().setResolvedView(resolvedView);
+		thr.getAction().setDispatcherType(dispatcher);
+		thr.getAction().setReturnRendered(resultRendered);
+		thr.getAction().getResultAction().setName(resultId);
 		thr.setTarget(target);
-		thr.setView(view);
 		thr.setRedirect(false);
-		thr.setDispatcher(dispatcher);
 		this.controller.setThrowsSafe(thr);
 		
-		getLogger().info(
-				String.format("added exception %s on controller %s",
-						new Object[] { target.getSimpleName(),
-								controller.getClassType().getSimpleName() }));
-		
-		return this;
+		return new ThrowSafeBuilder(thr, controller, validatorFactory, 
+				this, null, applicationContext);
 	}
 	
 	public ControllerBuilder setDefaultAction(String id) {
@@ -803,6 +823,10 @@ public class ControllerBuilder {
 	public ControllerBuilder removeResponseType(DataType value){
 		this.controller.getResponseTypes().remove(value);
 		return this;
+	}
+
+	public ComponentBuilder getParentBuilder() {
+		return null;
 	}
 	
 }

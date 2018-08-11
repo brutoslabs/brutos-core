@@ -43,7 +43,7 @@ public class ConstructorBuilder extends RestrictionBuilder {
 
 	public ConstructorBuilder(Bean mappingBean, BeanBuilder beanBuilder,
 			ValidatorFactory validatorFactory, Controller controller) {
-		super(mappingBean.getConstructor().getValidator().getConfiguration());
+		super(mappingBean.getConstructor().getValidator().getConfiguration(), beanBuilder);
 		this.mappingBean = mappingBean;
 		this.beanBuilder = beanBuilder;
 		this.validatorFactory = validatorFactory;

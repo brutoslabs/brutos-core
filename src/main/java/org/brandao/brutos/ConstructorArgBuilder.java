@@ -39,7 +39,7 @@ public class ConstructorArgBuilder extends RestrictionBuilder implements
 	public ConstructorArgBuilder(ConstructorArgBean arg,
 			ConstructorBuilder constructorBuilder,
 			ValidatorFactory validatorFactory) {
-		super(arg.getValidator().getConfiguration());
+		super(arg.getValidator().getConfiguration(), constructorBuilder);
 		this.arg = arg;
 		this.constructorBuilder = constructorBuilder;
 		this.validatorFactory = validatorFactory;

@@ -60,6 +60,8 @@ public class Controller {
 	private ActionListener actionListener;
 
 	private Map<Class<?>, ThrowableSafeData> throwsSafe;
+
+	private Map<Class<?>, Action> throwsSafeAction;
 	
 	private List<ControllerID> alias;
 
@@ -95,6 +97,7 @@ public class Controller {
 		this.fields 			= new ArrayList<PropertyController>();
 		this.mappingBeans 		= new LinkedHashMap<String, Bean>();
 		this.actions 			= new LinkedHashMap<ActionID, Action>();
+		this.throwsSafeAction   = new LinkedHashMap<Class<?>, Action>();
 		this.interceptorStack 	= new ArrayList<Interceptor>();
 		this.alias 				= new ArrayList<ControllerID>();
 		this.reverseMethods 	= new LinkedHashMap<ReverseActionKey, List<Action>>();
@@ -202,6 +205,10 @@ public class Controller {
 		return (Action) actions.get(id);
 	}
 
+	public Action getThrowSafeActionById(Class<?> id) {
+		return (Action) throwsSafeAction.get(id);
+	}
+	
 	public Action getActionByName(String name){
 		return (Action) actions.get(new ActionID(name));
 	}
@@ -216,6 +223,10 @@ public class Controller {
 			.registry(null, method.getController(), id, method);
 	}
 
+	public void addThrowSafeAction(Class<?> id, Action method) {
+		this.throwsSafeAction.put(id, method);
+	}
+	
 	public void removeAction(ActionID id) {
 		Action method = this.actions.get(id);
 		
