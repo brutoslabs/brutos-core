@@ -17,6 +17,9 @@
 
 package org.brandao.brutos.mapping;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * 
  * @author Brandao
@@ -27,6 +30,8 @@ public class ThrowableSafeData {
 
 	protected Class<?> target;
 	
+	protected Set<Class<?>> alias;
+	
 	protected Action parent;
 	
 	protected Action action;
@@ -35,6 +40,7 @@ public class ThrowableSafeData {
 		super();
 		this.parent = parent;
 		this.action = new Action();
+		this.alias = new LinkedHashSet<Class<?>>();
 	}
 
 	public boolean isRedirect() {
@@ -67,6 +73,14 @@ public class ThrowableSafeData {
 
 	public void setAction(Action action) {
 		this.action = action;
+	}
+
+	public Set<Class<?>> getAlias() {
+		return alias;
+	}
+
+	public void setAlias(Set<Class<?>> alias) {
+		this.alias = alias;
 	}
 	
 }

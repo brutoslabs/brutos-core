@@ -17,6 +17,8 @@
 
 package org.brandao.brutos;
 
+import java.util.Map;
+
 import org.brandao.brutos.mapping.Action;
 import org.brandao.brutos.mapping.Controller;
 import org.brandao.brutos.mapping.MappingException;
@@ -78,9 +80,48 @@ public class ThrowSafeBuilder
 	}
 	
 	public void addAlias(Class<?> value){
+		Map<Class<?>, ThrowableSafeData> map;
+		
 		if(this.action != null){
-			this.action.setThrowsSafe(thr);
+			map = this.action.getThrowsSafe();
 		}
+		else{
+			map = this.controller.getThrowsSafe();
+		}
+
+		if(map.containsKey(value)){
+			throw new MappingException("already added: " + value);
+		}
+		
+		Class<?> target = this.throwSafeData.getTarget();
+		
+		ThrowableSafeData tfd = map.get(target);
+		map.put(value, tfd);
+		tfd.getAlias().add(value);
+	}
+
+	public void removeAlias(Class<?> value){
+
+		Map<Class<?>, ThrowableSafeData> map;
+		
+		if(this.action != null){
+			map = this.action.getThrowsSafe();
+		}
+		else{
+			map = this.controller.getThrowsSafe();
+		}
+
+		if(!map.containsKey(value)){
+			return;
+		}
+		
+		Class<?> target = this.throwSafeData.getTarget();
+
+		if(target == value){
+			return;
+		}
+		
+		map.remove(value);
 	}
 	
 	public ParametersBuilder buildParameters() {

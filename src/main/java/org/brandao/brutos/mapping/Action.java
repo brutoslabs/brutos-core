@@ -169,7 +169,7 @@ public class Action {
 	public void setThrowsSafe(ThrowableSafeData thr) {
 		this.throwsSafe.put(thr.getTarget(), thr);
 	}
-
+	
 	public int getParamterSize() {
 		return this.parameters.size();
 	}
@@ -457,6 +457,14 @@ public class Action {
 		this.id = value;
 	}
 	
+	public Map<Class<?>, ThrowableSafeData> getThrowsSafe() {
+		return throwsSafe;
+	}
+
+	public void setThrowsSafe(Map<Class<?>, ThrowableSafeData> throwsSafe) {
+		this.throwsSafe = throwsSafe;
+	}
+
 	public boolean isReturnRendered() {
 		return returnRendered;
 	}

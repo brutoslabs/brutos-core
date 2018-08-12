@@ -68,7 +68,7 @@ public class ActionBuilder extends RestrictionBuilder {
 		this.controllerBuilder = controllerBuilder;
 		this.applicationContext = applicationContext;
 		this.parametersBuilder = new ParametersBuilder(controller, action,
-				validatorFactory, controllerBuilder, applicationContext);
+				validatorFactory, controllerBuilder, this, null, applicationContext);
 	}
 
 	public ActionBuilder addAlias(String id) {
@@ -195,8 +195,8 @@ public class ActionBuilder extends RestrictionBuilder {
 		thr.setRedirect(false);
 		this.action.setThrowsSafe(thr);
 		
-		return new ThrowSafeBuilder(thr, controller, validatorFactory, 
-				controllerBuilder, this, applicationContext);
+		return new ThrowSafeBuilder(thr, this.controller, this.action, this.validatorFactory, 
+				this.controllerBuilder, this, this.applicationContext);
 	}
 
 	public ControllerBuilder getControllerBuilder() {

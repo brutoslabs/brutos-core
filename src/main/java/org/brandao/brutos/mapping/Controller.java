@@ -217,6 +217,50 @@ public class Controller {
 		return actions;
 	}
 
+	public Map<String, Bean> getMappingBeans() {
+		return mappingBeans;
+	}
+
+	public void setMappingBeans(Map<String, Bean> mappingBeans) {
+		this.mappingBeans = mappingBeans;
+	}
+
+	public List<PropertyController> getFields() {
+		return fields;
+	}
+
+	public void setFields(List<PropertyController> fields) {
+		this.fields = fields;
+	}
+
+	public Map<Class<?>, ThrowableSafeData> getThrowsSafe() {
+		return throwsSafe;
+	}
+
+	public void setThrowsSafe(Map<Class<?>, ThrowableSafeData> throwsSafe) {
+		this.throwsSafe = throwsSafe;
+	}
+
+	public Map<Class<?>, Action> getThrowsSafeAction() {
+		return throwsSafeAction;
+	}
+
+	public void setThrowsSafeAction(Map<Class<?>, Action> throwsSafeAction) {
+		this.throwsSafeAction = throwsSafeAction;
+	}
+
+	public void setActions(Map<ActionID, Action> actions) {
+		this.actions = actions;
+	}
+
+	public void setReverseMethods(Map<ReverseActionKey, List<Action>> reverseMethods) {
+		this.reverseMethods = reverseMethods;
+	}
+
+	public void setAlias(List<ControllerID> alias) {
+		this.alias = alias;
+	}
+
 	public void addAction(ActionID id, Action method) {
 		this.actions.put(id, method);
 		this.context.getActionResolver()

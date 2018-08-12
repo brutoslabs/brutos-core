@@ -214,8 +214,8 @@ public class ControllerBuilder implements ComponentBuilder {
 		thr.setRedirect(false);
 		this.controller.setThrowsSafe(thr);
 		
-		return new ThrowSafeBuilder(thr, controller, validatorFactory, 
-				this, null, applicationContext);
+		return new ThrowSafeBuilder(thr, this.controller, null, this.validatorFactory, 
+				this, null, this.applicationContext);
 	}
 	
 	public ControllerBuilder setDefaultAction(String id) {
