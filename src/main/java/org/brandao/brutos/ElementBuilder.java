@@ -38,7 +38,7 @@ public class ElementBuilder extends RestrictionBuilder implements
 
 	public ElementBuilder(DependencyBean element, BeanBuilder beanBuilder,
 			ValidatorFactory validatorFactory) {
-		super(element.getValidator().getConfiguration());
+		super(element.getValidator().getConfiguration(), beanBuilder);
 		this.element = element;
 		this.beanBuilder = beanBuilder;
 		this.validatorFactory = validatorFactory;

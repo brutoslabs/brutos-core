@@ -63,13 +63,13 @@ public abstract class AbstractRenderView
 		Object objectThrow = stackRequestElement.getObjectThrow();
 
 		if (throwableSafeData != null) {
-			if (throwableSafeData.getParameterName() != null)
-				requestScope.put(throwableSafeData.getParameterName(),
+			if (throwableSafeData.getAction().getResultAction().getName() != null)
+				requestScope.put(throwableSafeData.getAction().getResultAction().getName(),
 						objectThrow);
 
-			if (throwableSafeData.getView() != null) {
-				this.showView(requestInstrument, throwableSafeData.getView(),
-						throwableSafeData.getDispatcherType());
+			if (throwableSafeData.getAction().getView() != null) {
+				this.showView(requestInstrument, throwableSafeData.getAction().getView(),
+						throwableSafeData.getAction().getDispatcherType());
 				return;
 			}
 		}

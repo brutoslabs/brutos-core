@@ -34,12 +34,12 @@ public class ThrowableSafeData {
 	
 	protected Action parent;
 	
-	protected Action action;
+	protected ThrowAction action;
 	
 	public ThrowableSafeData(Action parent){
 		super();
 		this.parent = parent;
-		this.action = new Action();
+		this.action = new ThrowAction();
 		this.alias = new LinkedHashSet<Class<?>>();
 	}
 
@@ -57,6 +57,7 @@ public class ThrowableSafeData {
 
 	public void setTarget(Class<?> target) {
 		this.target = target;
+		this.action.setTarget(target);
 	}
 
 	public Action getParent() {
@@ -67,11 +68,11 @@ public class ThrowableSafeData {
 		this.parent = parent;
 	}
 
-	public Action getAction() {
+	public ThrowAction getAction() {
 		return action;
 	}
 
-	public void setAction(Action action) {
+	public void setAction(ThrowAction action) {
 		this.action = action;
 	}
 

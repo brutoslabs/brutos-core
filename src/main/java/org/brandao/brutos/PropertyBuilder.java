@@ -42,7 +42,7 @@ public class PropertyBuilder extends RestrictionBuilder implements
 
 	public PropertyBuilder(PropertyBean propertyBean, BeanBuilder beanBuilder,
 			ValidatorFactory validatorFactory) {
-		super(propertyBean.getValidator().getConfiguration());
+		super(propertyBean.getValidator().getConfiguration(), beanBuilder);
 		this.propertyBean = propertyBean;
 		this.controllerBuilder = beanBuilder.getControllerBuilder();
 		this.beanBuilder = beanBuilder;
@@ -52,7 +52,7 @@ public class PropertyBuilder extends RestrictionBuilder implements
 	public PropertyBuilder(PropertyController propertyBean,
 			ControllerBuilder controllerBuilder,
 			ValidatorFactory validatorFactory) {
-		super(propertyBean.getValidate().getConfiguration());
+		super(propertyBean.getValidate().getConfiguration(), controllerBuilder);
 		this.propertyBean = propertyBean;
 		this.controllerBuilder = controllerBuilder;
 		this.validatorFactory = validatorFactory;

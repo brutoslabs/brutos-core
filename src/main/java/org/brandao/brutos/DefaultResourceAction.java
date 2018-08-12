@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import org.brandao.brutos.mapping.Action;
 import org.brandao.brutos.mapping.Controller;
 import org.brandao.brutos.mapping.DataTypeMap;
-import org.brandao.brutos.mapping.ThrowableSafeData;
+import org.brandao.brutos.mapping.ThrowAction;
 
 /**
  * 
@@ -88,7 +88,7 @@ public class DefaultResourceAction implements ResourceAction {
 			//Indica que a ação não possui tipos predefinidos
 			//Vai ocorrer a tentativa de obter os tipos da execução anterior
 			
-			if(this.action instanceof ThrowableSafeData){
+			if(this.action instanceof ThrowAction){
 				//indica que é uma exceção se comportando como uma ação.
 				//no mínimo, sempre existirá uma chamada na pilha.
 				
@@ -118,7 +118,7 @@ public class DefaultResourceAction implements ResourceAction {
 		
 		if(this.action.getResponseTypes().isEmpty()){
 			
-			if(this.action instanceof ThrowableSafeData){
+			if(this.action instanceof ThrowAction){
 				StackRequestElement sre = 
 						Invoker.getInstance()
 							.getStackRequestElement()

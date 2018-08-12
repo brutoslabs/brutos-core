@@ -37,7 +37,7 @@ public class KeyBuilder extends RestrictionBuilder implements GenericBuilder {
 
 	public KeyBuilder(DependencyBean key, BeanBuilder beanBuilder,
 			ValidatorFactory validatorFactory) {
-		super(key.getValidator().getConfiguration());
+		super(key.getValidator().getConfiguration(), beanBuilder);
 		this.key = key;
 		this.beanBuilder = beanBuilder;
 		this.validatorFactory = validatorFactory;
