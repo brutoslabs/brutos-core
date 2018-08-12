@@ -47,8 +47,10 @@ public class ParametersBuilder extends RestrictionBuilder {
 	public ParametersBuilder(Controller controller, Action action,
 			ValidatorFactory validatorFactory,
 			ControllerBuilder controllerBuilder,
+			ActionBuilder actionBuilder,
+			ThrowSafeBuilder throwSafeBuilder,
 			ConfigurableApplicationContext applicationContext) {
-		super(action.getParametersValidator().getConfiguration());
+		super(action.getParametersValidator().getConfiguration(), actionBuilder == null? throwSafeBuilder : actionBuilder);
 		this.controller = controller;
 		this.action = action;
 		this.validatorFactory = validatorFactory;

@@ -17,6 +17,7 @@
 
 package org.brandao.brutos;
 
+import org.brandao.brutos.mapping.Action;
 import org.brandao.brutos.mapping.Controller;
 import org.brandao.brutos.mapping.MappingException;
 import org.brandao.brutos.mapping.MetaBean;
@@ -38,6 +39,8 @@ public class ThrowSafeBuilder
 
 	protected Controller controller;
 
+	protected Action action;
+	
 	protected ThrowableSafeData throwSafeData;
 
 	protected ValidatorFactory validatorFactory;
@@ -52,6 +55,7 @@ public class ThrowSafeBuilder
 	
 	public ThrowSafeBuilder(ThrowSafeBuilder throwSafeBuilder) {
 		this(throwSafeBuilder.throwSafeData, throwSafeBuilder.controller,
+				throwSafeBuilder.action,
 				throwSafeBuilder.validatorFactory,
 				throwSafeBuilder.controllerBuilder,
 				throwSafeBuilder.actionBuilder,
@@ -59,17 +63,24 @@ public class ThrowSafeBuilder
 	}
 
 	public ThrowSafeBuilder(ThrowableSafeData throwSafe, Controller controller,
+			Action action,
 			ValidatorFactory validatorFactory,
 			ControllerBuilder controllerBuilder, ActionBuilder actionBuilder,
 			ConfigurableApplicationContext applicationContext) {
-		super(throwSafe.getResultValidator().getConfiguration(), actionBuilder);
+		super(throwSafe.getAction().getResultValidator().getConfiguration(), actionBuilder);
 		this.controller = controller;
 		this.throwSafeData = throwSafe;
 		this.validatorFactory = validatorFactory;
 		this.controllerBuilder = controllerBuilder;
 		this.applicationContext = applicationContext;
-		this.parametersBuilder = new ParametersBuilder(controller, throwSafe,
-				validatorFactory, controllerBuilder, applicationContext);
+		this.parametersBuilder = new ParametersBuilder(controller, throwSafe.getAction(),
+				validatorFactory, controllerBuilder, null, this, applicationContext);
+	}
+	
+	public void addAlias(Class<?> value){
+		if(this.action != null){
+			this.action.setThrowsSafe(thr);
+		}
 	}
 	
 	public ParametersBuilder buildParameters() {
@@ -85,7 +96,7 @@ public class ThrowSafeBuilder
 	}
 	
 	public String getName() {
-		return this.throwSafeData.getName();
+		return this.throwSafeData.getAction().getName();
 	}
 
 	public ThrowSafeBuilder setView(String view, boolean resolvedView) {
@@ -101,14 +112,14 @@ public class ThrowSafeBuilder
 						view
 					);
 
-		this.throwSafeData.setView(view);
-		this.throwSafeData.setResolvedView(resolvedView);
+		this.throwSafeData.getAction().setView(view);
+		this.throwSafeData.getAction().setResolvedView(resolvedView);
 		
 		return this;
 	}
 
 	public String getView() {
-		return this.throwSafeData.getView();
+		return this.throwSafeData.getAction().getView();
 	}
 
 	public ThrowSafeBuilder setDispatcherType(String value) {
@@ -123,71 +134,71 @@ public class ThrowSafeBuilder
 	}
 
 	public ThrowSafeBuilder setDispatcherType(DispatcherType value) {
-		this.throwSafeData.setDispatcherType(value);
+		this.throwSafeData.getAction().setDispatcherType(value);
 		return this;
 	}
 
 	public DispatcherType getDispatcherType() {
-		return this.throwSafeData.getDispatcherType();
+		return this.throwSafeData.getAction().getDispatcherType();
 	}
 
 	public ThrowSafeBuilder setExecutor(String value) {
 		value = StringUtil.adjust(value);
-		this.throwSafeData.setExecutor(value);
+		this.throwSafeData.getAction().setExecutor(value);
 		return this;
 	}
 
 	public String getExecutor() {
-		return this.throwSafeData.getExecutor();
+		return this.throwSafeData.getAction().getExecutor();
 	}
 
 	public ThrowSafeBuilder setResult(String value) {
 		value = StringUtil.adjust(value);
-		this.throwSafeData.getResultAction().setName(value);
+		this.throwSafeData.getAction().getResultAction().setName(value);
 		return this;
 	}
 
 	public String getResult() {
-		return this.throwSafeData.getResultAction().getName();
+		return this.throwSafeData.getAction().getResultAction().getName();
 		//return this.action.getReturnIn();
 	}
 
 	public ThrowSafeBuilder setResultRendered(boolean value) {
-		this.throwSafeData.setReturnRendered(value);
+		this.throwSafeData.getAction().setReturnRendered(value);
 		return this;
 	}
 
 	public boolean isResultRendered() {
-		return this.throwSafeData.isReturnRendered();
+		return this.throwSafeData.getAction().isReturnRendered();
 	}
 
 	public int getParametersSize() {
-		return this.throwSafeData.getParamterSize();
+		return this.throwSafeData.getAction().getParamterSize();
 	}
 
 	public ParameterBuilder getParameter(int index) {
-		ParameterAction param = this.throwSafeData.getParameter(index);
+		ParameterAction param = this.throwSafeData.getAction().getParameter(index);
 		return new ParameterBuilder(param, this.parametersBuilder,
 				this.validatorFactory);
 	}
 
 	public ThrowSafeBuilder addRequestType(DataType value){
-		this.throwSafeData.getRequestTypes().add(value);
+		this.throwSafeData.getAction().getRequestTypes().add(value);
 		return this;
 	}
 	
 	public ThrowSafeBuilder removeRequestType(DataType value){
-		this.throwSafeData.getRequestTypes().remove(value);
+		this.throwSafeData.getAction().getRequestTypes().remove(value);
 		return this;
 	}
 
 	public ThrowSafeBuilder addResponseType(DataType value){
-		this.throwSafeData.getResponseTypes().add(value);
+		this.throwSafeData.getAction().getResponseTypes().add(value);
 		return this;
 	}
 	
 	public ThrowSafeBuilder removeResponseType(DataType value){
-		this.throwSafeData.getResponseTypes().remove(value);
+		this.throwSafeData.getAction().getResponseTypes().remove(value);
 		return this;
 	}
 
@@ -238,8 +249,8 @@ public class ThrowSafeBuilder
 	}
 
 	public BeanBuilder buildParameter(Class<?> classType) {
-		String beanName = this.throwSafeData.getCode() + "#"
-				+ this.throwSafeData.getParamterSize();
+		String beanName = this.throwSafeData.getAction().getCode() + "#"
+				+ this.throwSafeData.getAction().getParamterSize();
 		BeanBuilder bb = this.controllerBuilder.buildMappingBean(beanName,
 				null, classType);
 
@@ -248,8 +259,8 @@ public class ThrowSafeBuilder
 	}
 
 	public BeanBuilder buildParameter(String name, Class<?> classType) {
-		String beanName = this.throwSafeData.getCode() + "#"
-				+ this.throwSafeData.getParamterSize();
+		String beanName = this.throwSafeData.getAction().getCode() + "#"
+				+ this.throwSafeData.getAction().getParamterSize();
 		BeanBuilder bb = this.controllerBuilder.buildMappingBean(beanName,
 				null, classType);
 
@@ -258,7 +269,7 @@ public class ThrowSafeBuilder
 	}
 
 	public BeanBuilder buildResultAction(Class<?> classType, Class<?> beanType) {
-		String beanName = this.throwSafeData.getCode() + "#Result";
+		String beanName = this.throwSafeData.getAction().getCode() + "#Result";
 		BeanBuilder bb = this.controllerBuilder.buildMappingBean(beanName,
 				null, beanType);
 
@@ -268,7 +279,7 @@ public class ThrowSafeBuilder
 
 	public BeanBuilder buildResultAction(String name, Class<?> classType,
 			Class<?> beanType) {
-		String beanName = this.throwSafeData.getCode() + "#Result";
+		String beanName = this.throwSafeData.getAction().getCode() + "#Result";
 		BeanBuilder bb = this.controllerBuilder.buildMappingBean(beanName,
 				null, beanType);
 
@@ -338,7 +349,7 @@ public class ThrowSafeBuilder
 		Configuration validatorConfig = new Configuration();
 
 		org.brandao.brutos.mapping.ResultAction resultAction = 
-				new org.brandao.brutos.mapping.ResultAction(this.throwSafeData);
+				new org.brandao.brutos.mapping.ResultAction(this.throwSafeData.getAction());
 
 		resultAction.setName(name);
 		resultAction.setScopeType(ScopeType.PARAM);
@@ -357,7 +368,7 @@ public class ThrowSafeBuilder
 							"<invalid> %s.%s(...): %s",
 							new Object[] {
 									this.controller.getClassType().getName(),
-									throwSafeData.getExecutor(),
+									throwSafeData.getAction().getExecutor(),
 									e.getMessage() }), e);
 				}
 			}
@@ -391,12 +402,12 @@ public class ThrowSafeBuilder
 				throw new MappingException("mapping not found: " + mapping);
 		}
 
-		throwSafeData.setResultAction(resultAction);
+		throwSafeData.getAction().setResultAction(resultAction);
 		return new ResultActionBuilder(this.controllerBuilder, null, this, resultAction, this.validatorFactory);
 	}
 	
 	public ResultActionBuilder getResultAction(){
-		return new ResultActionBuilder(this.controllerBuilder, null, this, this.throwSafeData.getResultAction(), this.validatorFactory);		
+		return new ResultActionBuilder(this.controllerBuilder, null, this, this.throwSafeData.getAction().getResultAction(), this.validatorFactory);		
 	}
 	
 	/* setResultAction */
