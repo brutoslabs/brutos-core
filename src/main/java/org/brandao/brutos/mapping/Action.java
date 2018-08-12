@@ -90,6 +90,8 @@ public class Action {
 
 	private DataTypeMap responseTypes;
 	
+	private Class<?> targetException;
+	
 	public Action() {
 		this.parameters = new ArrayList<ParameterAction>();
 		this.parametersType 	= new ArrayList<Class<?>>();
@@ -101,6 +103,19 @@ public class Action {
 		this.alias 				= new ArrayList<ActionID>();
 		this.requestTypes 	    = new DataTypeMap();
 		this.responseTypes      = new DataTypeMap();
+		this.targetException    = null;
+	}
+
+	public Class<?> getTargetException() {
+		return targetException;
+	}
+
+	public void setTargetException(Class<?> targetException) {
+		this.targetException = targetException;
+	}
+
+	public void setAlias(List<ActionID> alias) {
+		this.alias = alias;
 	}
 
 	public DataTypeMap getRequestTypes() {
