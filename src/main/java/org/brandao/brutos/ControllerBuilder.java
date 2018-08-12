@@ -182,17 +182,12 @@ public class ControllerBuilder implements ComponentBuilder {
 					+ controller.getClassType().getName());
 		}
 
-		if (StringUtil.isEmpty(view) && StringUtil.isEmpty(executor)){
-			throw new MappingException(
-					"view must be informed: " + target);
-		}
-		
 		if (!Throwable.class.isAssignableFrom(target)){
 			throw new MappingException("target is not allowed: "
 					+ target.getName());
 		}
 
-		if (this.controller.getThrowsSafe(target) != null){
+		if (this.controller.getThrowsSafe().containsKey(target)){
 			throw new MappingException(
 					"the exception has been added on action: "
 							+ target.getSimpleName());
@@ -210,6 +205,7 @@ public class ControllerBuilder implements ComponentBuilder {
 		thr.getAction().setDispatcherType(dispatcher);
 		thr.getAction().setReturnRendered(resultRendered);
 		thr.getAction().getResultAction().setName(resultId);
+		thr.getAction().setExecutor(executor);
 		thr.setTarget(target);
 		thr.setRedirect(false);
 		this.controller.setThrowsSafe(thr);
