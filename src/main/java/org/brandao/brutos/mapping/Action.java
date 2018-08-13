@@ -275,6 +275,11 @@ public class Action {
 
 	public synchronized void flush() {
 		try {
+			
+			for(ThrowableSafeData tsd: this.throwsSafe.values()){
+				tsd.getAction().flush();
+			}
+			
 			if (this.executor == null) {
 				return;
 			}

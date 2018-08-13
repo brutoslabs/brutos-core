@@ -371,15 +371,17 @@ public class Invoker {
 		List<ParameterAction> params = action.getParameters();
 		Object[] values = request.getParameters();
 		
-		int i=0;
-		
-		for(ParameterAction param: params){
-			request.setProperty(
-				param.getName() == null? 
-					param.getRealName() : 
-					param.getName(), 
-				values[i++]
-			);
+		if(values != null){
+			int i=0;
+			
+			for(ParameterAction param: params){
+				request.setProperty(
+					param.getName() == null? 
+						param.getRealName() : 
+						param.getName(), 
+					values[i++]
+				);
+			}
 		}
 
 		if(throwData != null){
@@ -388,7 +390,14 @@ public class Invoker {
 			if(throwData.getAction().getExecutor() != null){
 				ActionResolver actionResolver = this.applicationContext.getActionResolver();
 				ResourceAction thrResourceAction = actionResolver.getResourceAction(throwData.getAction(), request);
-				this.invoke(resourceAction.getController(), thrResourceAction, request.getResource(), null);
+				Object oldValue = request.getParameter(throwData.getAction().getResultAction().getName());
+				try{
+					request.setParameter(throwData.getAction().getResultAction().getName(), request.getThrowable());
+					this.invoke(resourceAction.getController(), thrResourceAction, request.getResource(), null);
+				}
+				finally{
+					request.setParameter(throwData.getAction().getResultAction().getName(), oldValue);
+				}
 			}
 			
 		}

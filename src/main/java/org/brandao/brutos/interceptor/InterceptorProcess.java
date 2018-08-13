@@ -231,6 +231,11 @@ public class InterceptorProcess implements InterceptorStack {
 		ThrowableSafeData tdata = null;
 		
 		if(method != null){
+			
+			if(method.getTargetException() != null){
+				throw e instanceof BrutosException? (BrutosException)e : new InterceptedException(e);
+			}
+			
 			tdata = method.getThrowsSafe(e.getClass());
 		}
 		else{

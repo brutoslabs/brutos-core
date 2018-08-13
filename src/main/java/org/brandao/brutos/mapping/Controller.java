@@ -391,10 +391,17 @@ public class Controller {
 	}
 
 	public synchronized void flush() {
+		
 		this.interceptorProcess.flush();
+		
 		for(Action ac: actions.values()){
 			ac.flush();
 		}
+		
+		for(ThrowableSafeData tsd: this.throwsSafe.values()){
+			tsd.getAction().flush();
+		}
+		
 	}
 
 	public void fieldsToRequest(Object webFrame) {

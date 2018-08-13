@@ -96,6 +96,7 @@ public class TypeManagerImp implements TypeManager {
 		defaultTypes.add(new DefaultEnumTypeFactory());
 		defaultTypes.add(new DefaultTypeFactory(ClassType.class, Class.class));
 		defaultTypes.add(new DefaultTypeFactory(ResultActionType.class, ResultAction.class));
+		defaultTypes.add(new ThrowableTypeFactory());
 		defaultTypes.add(new ObjectTypeFactory());
 	}
 
