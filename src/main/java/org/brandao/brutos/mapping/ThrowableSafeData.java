@@ -39,7 +39,7 @@ public class ThrowableSafeData {
 	public ThrowableSafeData(Action parent){
 		super();
 		this.parent = parent;
-		this.action = new Action();
+		this.action = new ThrowAction();
 		this.alias = new LinkedHashSet<Class<?>>();
 	}
 

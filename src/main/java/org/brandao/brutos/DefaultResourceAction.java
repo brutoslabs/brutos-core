@@ -78,59 +78,26 @@ public class DefaultResourceAction implements ResourceAction {
 	public DataTypeMap getRequestTypes(){
 		
 		if(this.action == null){
-			//Significa que não foi selecionada uma ação
-			//Deve ser usado os tipos do controlador.
 			return this.controller.getRequestTypes();
 		}
 		
-		if(this.action.getRequestTypes().isEmpty()){
-			//Indica que a ação não possui tipos predefinidos
-			//Vai ocorrer a tentativa de obter os tipos da execução anterior
-			
-			if(this.action.getTargetException() != null){
-				//indica que é uma exceção se comportando como uma ação.
-				//no mínimo, sempre existirá uma chamada na pilha.
-				
-				//Obtém a execução anterior
-				StackRequestElement sre = 
-						Invoker.getInstance()
-							.getStackRequestElement()
-							.getPreviousStackRequestElement();
-				
-				//Obtém o tipo da requisição anterior
-				DataTypeMap dtm = sre.getRequest().getResourceAction().getRequestTypes();
-				
-				return dtm;
-			}
-			
-			return this.controller.getRequestTypes();
-		}
+		DataTypeMap types = this.action.getRequestTypes();
 		
-		return this.action.getRequestTypes();
+		return types.isEmpty()? 
+					this.controller.getRequestTypes() :
+					types;
 	}
 
 	public DataTypeMap getResponseTypes(){
-		
 		if(this.action == null){
 			return this.controller.getResponseTypes();
 		}
 		
-		if(this.action.getResponseTypes().isEmpty()){
-			
-			if(this.action.getTargetException() != null){
-				StackRequestElement sre = 
-						Invoker.getInstance()
-							.getStackRequestElement()
-							.getPreviousStackRequestElement();
-				
-				DataTypeMap dtm = sre.getRequest().getResourceAction().getResponseTypes();
-				
-				return dtm;
-			}			
-			return this.controller.getResponseTypes();
-		}
+		DataTypeMap types = this.action.getResponseTypes();
 		
-		return this.action.getResponseTypes();
+		return types.isEmpty()? 
+					this.controller.getResponseTypes() :
+					types;
 	}
 	
 }

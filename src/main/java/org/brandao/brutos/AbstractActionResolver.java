@@ -30,7 +30,7 @@ public abstract class AbstractActionResolver
 		this.actionTypeResolver.remove(key);
 	}
 
-	public ResourceAction getResourceAction(Action action) throws ActionResolverException {
+	public ResourceAction getResourceAction(Action action, MutableMvcRequest request) throws ActionResolverException {
 		return new DefaultResourceAction( action.getController(), action );
 	}
 

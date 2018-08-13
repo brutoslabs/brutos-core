@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 
 import org.brandao.brutos.ConfigurableApplicationContext;
 import org.brandao.brutos.Invoker;
+import org.brandao.brutos.MutableMvcRequest;
+import org.brandao.brutos.RequestProvider;
 import org.brandao.brutos.mapping.Controller;
 import org.brandao.brutos.mapping.Action;
 
@@ -56,7 +58,7 @@ public abstract class ActionEntityProxyHandler extends AbstractEntityProxyHandle
 		
 		Action action = controller.getMethod(thisMethod);
 		return invoker.invoke(controller, context.getActionResolver()
-				.getResourceAction(action), resource, args);
+				.getResourceAction(action, (MutableMvcRequest)RequestProvider.getRequest()), resource, args);
 	}
 	
 }

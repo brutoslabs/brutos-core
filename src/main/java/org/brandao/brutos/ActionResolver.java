@@ -53,6 +53,6 @@ public interface ActionResolver {
 			String actionId, MutableMvcRequest request) throws ActionResolverException;
     
 	
-	ResourceAction getResourceAction(Action action) throws ActionResolverException;
+	ResourceAction getResourceAction(Action action, MutableMvcRequest request) throws ActionResolverException;
 
 }

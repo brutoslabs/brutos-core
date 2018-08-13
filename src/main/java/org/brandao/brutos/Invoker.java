@@ -274,8 +274,11 @@ public class Invoker {
 			MutableMvcResponse response){
 		
 		if(request.getResourceAction() != null){
-			request.setResource(request.getResourceAction()
-					.getController().getInstance(objectFactory));
+			if(request.getResource() == null){
+				request
+					.setResource(
+						request.getResourceAction().getController().getInstance(objectFactory));
+			}
 			return true;
 		}
 		
@@ -384,7 +387,7 @@ public class Invoker {
 			
 			if(throwData.getAction().getExecutor() != null){
 				ActionResolver actionResolver = this.applicationContext.getActionResolver();
-				ResourceAction thrResourceAction = actionResolver.getResourceAction(throwData.getAction());
+				ResourceAction thrResourceAction = actionResolver.getResourceAction(throwData.getAction(), request);
 				this.invoke(resourceAction.getController(), thrResourceAction, request.getResource(), null);
 			}
 			
