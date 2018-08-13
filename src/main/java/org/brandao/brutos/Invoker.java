@@ -24,9 +24,12 @@ import org.brandao.brutos.interceptor.ConfigurableInterceptorHandler;
 import org.brandao.brutos.interceptor.InterceptorHandlerImp;
 import org.brandao.brutos.logger.Logger;
 import org.brandao.brutos.logger.LoggerProvider;
+import org.brandao.brutos.mapping.Action;
 import org.brandao.brutos.mapping.Controller;
 import org.brandao.brutos.mapping.DataTypeMap;
+import org.brandao.brutos.mapping.ParameterAction;
 import org.brandao.brutos.mapping.PropertyController;
+import org.brandao.brutos.mapping.ThrowableSafeData;
 import org.brandao.brutos.scope.Scope;
 
 /**
@@ -218,12 +221,14 @@ public class Invoker {
 			
 			request.setRequestInstrument(requestInstrument);
 			request.setStackRequestElement(element);
-
 			
 			stackRequest.push(element);
 			pushStackRequest = true;
 			
 			this.invokeApplication(request, response, element, requestInstrument);
+			
+			this.updateActionResult(request, response);
+			this.updateRequest(element.getController(), element.getResource(), request);
 			
 			if(!requestInstrument.isHasViewProcessed()){
 				this.renderView(requestInstrument, request, response, element);
@@ -333,6 +338,60 @@ public class Invoker {
 		
 	}
 	
+	protected void updateActionResult(MutableMvcRequest request, 
+			MutableMvcResponse response){
+		
+		ResourceAction resourceAction = request.getResourceAction();
+		
+		if(resourceAction == null){
+			return;
+		}
+
+		Action action = resourceAction.getMethodForm();
+		
+		if(action == null){
+			return;
+		}
+		
+		String resultName = action.getResultAction().getName();
+		
+		request.setProperty(
+			resultName == null? 
+				BrutosConstants.DEFAULT_RETURN_NAME : 
+				resultName, 
+			response.getResult()
+		);
+
+		ThrowableSafeData throwData = 
+				request.getStackRequestElement().getThrowableSafeData();
+		
+		List<ParameterAction> params = action.getParameters();
+		Object[] values = request.getParameters();
+		
+		int i=0;
+		
+		for(ParameterAction param: params){
+			request.setProperty(
+				param.getName() == null? 
+					param.getRealName() : 
+					param.getName(), 
+				values[i++]
+			);
+		}
+
+		if(throwData != null){
+			request.setProperty(throwData.getAction().getResultAction().getName(), request.getThrowable());
+			
+			if(throwData.getAction().getExecutor() != null){
+				ActionResolver actionResolver = this.applicationContext.getActionResolver();
+				ResourceAction thrResourceAction = actionResolver.getResourceAction(throwData.getAction());
+				this.invoke(resourceAction.getController(), thrResourceAction, request.getResource(), null);
+			}
+			
+		}
+		
+	}
+	
 	protected void invokeApplication(
 			MutableMvcRequest request,
 			MutableMvcResponse response,
@@ -360,6 +419,7 @@ public class Invoker {
 		Controller controller = element.getController();
 		
 		controller.proccessBrutosAction(ih);
+		
 	}
 	
 	protected void renderView(
@@ -367,12 +427,8 @@ public class Invoker {
 			MutableMvcResponse response, StackRequestElement element) 
 					throws IllegalAccessException, IllegalArgumentException, 
 					InvocationTargetException{
-		
-		this.updateRequest(element.getController(), element.getResource(), request);
-		
 		renderView.show(request, response);
 		requestInstrument.setHasViewProcessed(true);
-		
 	}
 	
 	protected boolean isSupportedRequestType(ResourceAction action, MutableMvcRequest request){

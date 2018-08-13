@@ -20,7 +20,6 @@ package org.brandao.brutos.interceptor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
-import org.brandao.brutos.ActionResolver;
 import org.brandao.brutos.BrutosException;
 import org.brandao.brutos.ConfigurableApplicationContext;
 import org.brandao.brutos.MutableMvcResponse;
@@ -239,17 +238,9 @@ public class InterceptorProcess implements InterceptorStack {
 		}
 
 		if(tdata != null) {
-			if(tdata.getAction().getExecutor() != null){
-				ConfigurableApplicationContext app = this.form.getContext();
-				ActionResolver actionResolver = app.getActionResolver();
-				ResourceAction ra = actionResolver.getResourceAction(tdata.getAction());
-				app.getInvoker().invoke(this.form, ra, null);
-			}
-			else{
-				stackRequestElement.getRequest().setThrowable(e);
-				stackRequestElement.setObjectThrow(e);
-				stackRequestElement.setThrowableSafeData(tdata);
-			}
+			stackRequestElement.getRequest().setThrowable(e);
+			stackRequestElement.setObjectThrow(e);
+			stackRequestElement.setThrowableSafeData(tdata);
 		}
 		else
 		if (e instanceof BrutosException){
