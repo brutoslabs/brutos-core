@@ -24,9 +24,8 @@ import java.util.Map;
  * 
  * @author Brandao
  */
-public class ResultActionImp implements ConfigurableResultAction {
-
-	private Map<String, Object> infos;
+public class ResultActionImp 
+	implements ConfigurableResultAction {
 
 	private Map<String, Object> values;
 
@@ -39,7 +38,6 @@ public class ResultActionImp implements ConfigurableResultAction {
 	private boolean resolved;
 
 	public ResultActionImp() {
-		this.infos = new HashMap<String, Object>();
 		this.values = new HashMap<String, Object>();
 	}
 
@@ -67,14 +65,6 @@ public class ResultActionImp implements ConfigurableResultAction {
 		this.values = values;
 	}
 
-	public Map<String, Object> getHeader() {
-		return this.infos;
-	}
-
-	public void setHeader(Map<String, Object> infos) {
-		this.infos = infos;
-	}
-
 	public ResultAction setView(String view) {
 		return this.setView(view, false);
 	}
@@ -96,11 +86,6 @@ public class ResultActionImp implements ConfigurableResultAction {
 			this.contentType = type;
 			return this;
 		}
-	}
-
-	public ResultAction addInfo(String name, String o) {
-		this.infos.put(name, o);
-		return this;
 	}
 
 	public ResultAction setContent(Object value) {

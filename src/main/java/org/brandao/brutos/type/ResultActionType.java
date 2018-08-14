@@ -27,6 +27,7 @@ import org.brandao.brutos.MutableMvcRequest;
 import org.brandao.brutos.MvcResponse;
 import org.brandao.brutos.RenderView;
 import org.brandao.brutos.ResourceAction;
+import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.StackRequestElement;
 import org.brandao.brutos.TypeManager;
 import org.brandao.brutos.ViewResolver;
@@ -45,23 +46,18 @@ public class ResultActionType extends AbstractType {
 	}
 
 	public Object convert(Object value) {
-		return value;
+		return new ResultActionImp();
 	}
 
 	public void show(MvcResponse response, Object value){
 
 		MutableMvcRequest request              = (MutableMvcRequest)response.getRequest();
 		ConfigurableResultAction resultAction  = (ConfigurableResultAction)value;
-		Map<String, Object> header             = resultAction.getHeader();
 		Map<String, Object> vars               = resultAction.getVars();
 		Object content                         = resultAction.getContent();
 		ConfigurableApplicationContext context = 
 				(ConfigurableApplicationContext) request.getRequestInstrument().getContext();
 		
-		for (String key : header.keySet()) {
-			response.setHeader(key, header.get(key));
-		}
-
 		for (String key : vars.keySet()) {
 			request.setProperty(key, vars.get(key));
 		}

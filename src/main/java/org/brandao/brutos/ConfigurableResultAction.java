@@ -23,7 +23,8 @@ import java.util.Map;
  * 
  * @author Brandao
  */
-public interface ConfigurableResultAction extends ResultAction {
+public interface ConfigurableResultAction 
+	extends ResultAction {
 
 	String getView();
 
@@ -36,9 +37,5 @@ public interface ConfigurableResultAction extends ResultAction {
 	Map<String, Object> getVars();
 
 	void setVars(Map<String, Object> values);
-
-	Map<String, Object> getHeader();
-
-	void setHeader(Map<String, Object> infos);
 
 }
