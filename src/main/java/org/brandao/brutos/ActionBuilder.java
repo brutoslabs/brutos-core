@@ -185,7 +185,8 @@ public class ActionBuilder extends RestrictionBuilder {
 		thr.getAction().setResolvedView(resolvedView);
 		thr.getAction().setDispatcherType(dispatcher);
 		thr.getAction().setReturnRendered(resultRendered);
-		thr.getAction().getResultAction().setName(resultId);
+		//thr.getAction().getResultAction().setName(resultId);
+		thr.setParameterName(resultId);
 		thr.getAction().setExecutor(executor);
 		thr.setTarget(target);
 		thr.setRedirect(false);

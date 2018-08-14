@@ -32,6 +32,8 @@ public class ThrowableSafeData {
 	
 	protected Set<Class<?>> alias;
 	
+	protected String parameterName;
+	
 	protected Action parent;
 	
 	protected Action action;
@@ -82,6 +84,14 @@ public class ThrowableSafeData {
 
 	public void setAlias(Set<Class<?>> alias) {
 		this.alias = alias;
+	}
+
+	public String getParameterName() {
+		return parameterName;
+	}
+
+	public void setParameterName(String parameterName) {
+		this.parameterName = parameterName;
 	}
 	
 }

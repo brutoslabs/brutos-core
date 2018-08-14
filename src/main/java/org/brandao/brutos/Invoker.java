@@ -385,18 +385,18 @@ public class Invoker {
 		}
 
 		if(throwData != null){
-			request.setProperty(throwData.getAction().getResultAction().getName(), request.getThrowable());
+			request.setProperty(throwData.getParameterName(), request.getThrowable());
 			
 			if(throwData.getAction().getExecutor() != null){
 				ActionResolver actionResolver = this.applicationContext.getActionResolver();
 				ResourceAction thrResourceAction = actionResolver.getResourceAction(throwData.getAction(), request);
-				Object oldValue = request.getParameter(throwData.getAction().getResultAction().getName());
+				Object oldValue = request.getParameter(throwData.getParameterName());
 				try{
-					request.setParameter(throwData.getAction().getResultAction().getName(), request.getThrowable());
+					request.setParameter(throwData.getParameterName(), request.getThrowable());
 					this.invoke(resourceAction.getController(), thrResourceAction, request.getResource(), null);
 				}
 				finally{
-					request.setParameter(throwData.getAction().getResultAction().getName(), oldValue);
+					request.setParameter(throwData.getParameterName(), oldValue);
 				}
 			}
 			
