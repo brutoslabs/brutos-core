@@ -48,7 +48,25 @@ public class UrlResource extends AbstractResource {
 	}
 
 	public boolean exists() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		InputStream in = null;
+		try {
+			URLConnection con = this.url.openConnection();
+			con.setUseCaches(false);
+			in = con.getInputStream();
+			return in != null;
+		}
+		catch(Throwable e) {
+			return false;
+		}
+		finally{
+			if(in != null) {
+				try {
+					in.close();
+				}
+				catch(Throwable ex) {
+				}
+			}
+		}
 	}
 
 	public InputStream getInputStream() throws IOException {
