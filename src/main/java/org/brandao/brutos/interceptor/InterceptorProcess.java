@@ -223,6 +223,10 @@ public class InterceptorProcess implements InterceptorStack {
 	private void processException(StackRequestElement stackRequestElement,
 			Throwable e, ResourceAction resourceAction) {
 
+		if(logger.isTraceEnabled()) {
+			logger.trace("action fail", e);
+		}
+		
 		Action method = 
 				resourceAction == null ? 
 					null : 

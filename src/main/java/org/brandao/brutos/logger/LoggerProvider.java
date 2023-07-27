@@ -38,12 +38,12 @@ public abstract class LoggerProvider {
 
 		String loggerName = config.getProperty(
 				"org.brandao.brutos.logger.provider",
-				"org.brandao.brutos.logger.JavaLoggerProvider");
+				Slf4jLoggerProvider.class.getName());
 
 		LoggerProvider logger = null;
 
 		try {
-			Class loggerClass = ClassUtil.get(loggerName);
+			Class<?> loggerClass = ClassUtil.get(loggerName);
 			logger = (LoggerProvider) ClassUtil.getInstance(loggerClass);
 
 		} catch (ClassNotFoundException e) {
@@ -73,6 +73,6 @@ public abstract class LoggerProvider {
 
 	public abstract Logger getLogger(String name);
 
-	public abstract Logger getLogger(Class clazz);
+	public abstract Logger getLogger(Class<?> clazz);
 
 }

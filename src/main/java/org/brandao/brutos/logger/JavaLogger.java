@@ -79,4 +79,14 @@ public class JavaLogger implements Logger {
 		return logger.isLoggable(Level.INFO);
 	}
 
+	public boolean isTraceEnabled() {
+		return false;
+	}
+
+	public void trace(String message) {
+	}
+
+	public void trace(String message, Throwable t) {
+	}
+
 }

@@ -4,7 +4,7 @@
 	<groupId>org.brandao</groupId>
 	<artifactId>brutos-core</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0-rc3</version>
+	<version>3.0-b1</version>
 	<name>brutos-core</name>
 	<description>Brutos core.</description>
 	<url>http://www.brutosframework.com.br/</url>
@@ -74,6 +74,7 @@
 					</execution>
 				</executions>
 			</plugin>
+<!--			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -87,6 +88,7 @@
 					</execution>
 				</executions>
 			</plugin>
+-->			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
@@ -106,8 +108,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<outputEncoding>UTF-8</outputEncoding>
 				</configuration>
@@ -177,6 +179,17 @@
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
 			<version>1.2</version>
+		</dependency>
+		<!-- Logger -->
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>2.0.7</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-reload4j</artifactId>
+		    <version>2.0.7</version>
 		</dependency>
 	</dependencies>
 
