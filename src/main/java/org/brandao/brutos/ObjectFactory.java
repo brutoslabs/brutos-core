@@ -27,7 +27,14 @@ public interface ObjectFactory {
 
 	Object getBean(String name);
 
-	Object getBean(Class clazz);
+	default Object getBean(Class<?> clazz) {
+		try {
+			return ClassUtil.getInstance(clazz);
+		}
+		catch(Throwable ex) {
+			throw new BrutosException(ex);
+		}
+	}
 
 	void configure(Properties properties);
 

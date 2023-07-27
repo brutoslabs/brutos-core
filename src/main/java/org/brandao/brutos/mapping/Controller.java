@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.brandao.brutos.ActionType;
 import org.brandao.brutos.BrutosException;
+import org.brandao.brutos.ClassUtil;
 import org.brandao.brutos.ConfigurableApplicationContext;
 import org.brandao.brutos.DispatcherType;
 import org.brandao.brutos.Invoker;
@@ -378,8 +379,9 @@ public class Controller {
 
 	public Object getInstance() {
 		try {
-			return getClassType().newInstance();
-		} catch (Exception e) {
+			return ClassUtil.getInstance(getClassType());
+		}
+		catch(Exception e) {
 			throw new InvokeException(e);
 		}
 	}

@@ -46,7 +46,7 @@ public class SpringObjectFactory implements ObjectFactory {
 				: null;
 	}
 
-	public Object getBean(Class clazz) {
+	public Object getBean(Class<?> clazz) {
 
 		if (!this.initialized)
 			this.init();

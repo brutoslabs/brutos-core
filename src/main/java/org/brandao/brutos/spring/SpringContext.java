@@ -34,10 +34,10 @@ public class SpringContext implements ApplicationContextAware {
 
 	public static final String SPRING_CONTEXT_NAME = "org.brandao.brutos.spring.context_name";
 
-	private static final Map currentApplicationCopntext;
+	private static final Map<String,ApplicationContext> currentApplicationCopntext;
 
 	static {
-		currentApplicationCopntext = new HashMap();
+		currentApplicationCopntext = new HashMap<String,ApplicationContext>();
 	}
 
 	private String name;
