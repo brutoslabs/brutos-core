@@ -46,18 +46,21 @@ import org.brandao.brutos.mapping.ResultAction;
  */
 public class JSR303Validator implements Validator {
 
-	private javax.validation.Validator objectValidator;
+	private static javax.validation.Validator objectValidator;
 	
-	private ExecutableValidator executableValidator;
+	private static ExecutableValidator executableValidator;
+	
+	static {
+		ValidatorFactory validatorFactory = 
+				Validation.buildDefaultValidatorFactory();
+		objectValidator		= validatorFactory.getValidator();
+		executableValidator	= objectValidator.forExecutables();
+	}
 	
 	private Properties config;
 	
 	public void configure(Properties config) {
-		ValidatorFactory validatorFactory = Validation
-				.buildDefaultValidatorFactory();
-		this.objectValidator		= validatorFactory.getValidator();
-		this.executableValidator	= this.objectValidator.forExecutables();
-		this.config 				= config;
+		this.config = config;
 	}
 
 	public Properties getConfiguration() {
