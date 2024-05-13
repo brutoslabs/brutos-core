@@ -31,6 +31,8 @@ import javax.validation.ValidatorFactory;
 import javax.validation.Validation;
 import javax.validation.executable.ExecutableValidator;
 
+import org.brandao.brutos.logger.Logger;
+import org.brandao.brutos.logger.LoggerProvider;
 import org.brandao.brutos.mapping.Action;
 import org.brandao.brutos.mapping.ConstructorArgBean;
 import org.brandao.brutos.mapping.ConstructorBean;
@@ -48,6 +50,7 @@ public class JSR303Validator implements Validator {
 
 	private static javax.validation.Validator objectValidator;
 	
+	
 	private static ExecutableValidator executableValidator;
 	
 	static {
@@ -56,6 +59,9 @@ public class JSR303Validator implements Validator {
 		objectValidator		= validatorFactory.getValidator();
 		executableValidator	= objectValidator.forExecutables();
 	}
+
+	private Logger logger = LoggerProvider
+			.getCurrentLoggerProvider().getLogger(JSR303Validator.class);
 	
 	private Properties config;
 	
@@ -81,13 +87,13 @@ public class JSR303Validator implements Validator {
 				executableValidator.validateConstructorParameters(source.getContructor(), value);
 			
 			Map<String,String> map = this.getNameMap(source.getConstructorArgs());
-			throwException(true, map, constraintViolations);
+			throwException(source, true, map, constraintViolations);
 		}
 		else{
 			Set<ConstraintViolation<Object>> constraintViolations = 
 				executableValidator.validateParameters(factoryInstance, method, value);
 			
-			throwException(true, null, constraintViolations);
+			throwException(source, true, null, constraintViolations);
 		}
 		
 	}
@@ -102,7 +108,7 @@ public class JSR303Validator implements Validator {
 				executableValidator.validateConstructorReturnValue(source.getContructor(), value) : 
 				executableValidator.validateReturnValue(factoryInstance, method, value);
 				
-		throwException(false, null, constraintViolations);
+		throwException(source, false, null, constraintViolations);
 	}
 
 	public void validate(PropertyBean source, Object beanInstance, Object value)
@@ -131,7 +137,7 @@ public class JSR303Validator implements Validator {
 			Set<ConstraintViolation<Object>> constraintViolations = 
 					executableValidator.validateParameters(controllerInstance, method, new Object[] {value});
 			
-			throwException(false, null, constraintViolations);
+			throwException(source, false, null, constraintViolations);
 		}
 
 	}
@@ -152,7 +158,7 @@ public class JSR303Validator implements Validator {
 				executableValidator.validateParameters(controller, method, value);
 			
 			Map<String,String> map = this.getNameMap(source.getParameters());
-			throwException(true, map, constraintViolations);
+			throwException(source, true, map, constraintViolations);
 		}
 	}
 
@@ -180,7 +186,7 @@ public class JSR303Validator implements Validator {
 									source.getName()
 					);
 			*/
-			throwException(false, null, constraintViolations);
+			throwException(source, false, null, constraintViolations);
 		}
 	}
 	
@@ -211,7 +217,7 @@ public class JSR303Validator implements Validator {
 	*/
 	
 	@SuppressWarnings("unchecked")
-	protected void throwException(boolean ignoreRoot, Map<String,String> updateRoot,
+	protected void throwException(Object origin, boolean ignoreRoot, Map<String,String> updateRoot,
 			Set<ConstraintViolation<Object>> constraintViolations)
 			throws ValidatorException {
 
@@ -260,6 +266,10 @@ public class JSR303Validator implements Validator {
 				String message = cv.getMessage();
 				ValidatorException e = new ValidatorException(message);
 				ex.addCause(strPath, e);
+			}
+			
+			if(logger.isTraceEnabled()) {
+				logger.trace("validate exception: " + origin, ex);
 			}
 			
 			throw ex;

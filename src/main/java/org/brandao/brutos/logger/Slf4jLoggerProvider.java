@@ -37,19 +37,28 @@ public class Slf4jLoggerProvider extends LoggerProvider {
 	}
 
 	public Logger getLogger(Class<?> clazz) {
-		return getLogger(clazz.getSimpleName());
+		return getLogger(clazz.getSimpleName(), clazz);
 	}
 
 	public Logger getLogger(String name) {
+		return getLogger(name, null);
+	}
+	
+	public Logger getLogger(String name, Class<?> clazz) {
+		
 		if (!cacheLoggers.containsKey(name)) {
-			org.slf4j.Logger jLogger = org.slf4j.LoggerFactory
-					.getLogger(name);
+			org.slf4j.Logger jLogger = 
+					clazz == null?
+							org.slf4j.LoggerFactory.getLogger(name):
+							org.slf4j.LoggerFactory.getLogger(clazz);
 
 			Logger logger = new Slf4jLogger(jLogger);
 			cacheLoggers.put(name, logger);
 			return logger;
-		} else
+		}
+		else {
 			return (Logger) cacheLoggers.get(name);
+		}
 	}
 
 	public void destroy() {
