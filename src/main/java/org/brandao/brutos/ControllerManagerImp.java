@@ -34,6 +34,9 @@ import org.brandao.brutos.ControllerManager.InternalUpdate;
  */
 public class ControllerManagerImp implements ControllerManager, InternalUpdate {
 
+	protected Logger logger = LoggerProvider
+			.getCurrentLoggerProvider().getLogger(ControllerBuilder.class);
+	
 	protected Map<ControllerID, Controller> mappedControllers;
 	
 	protected Map<Class<?>, Controller> classMappedControllers;
@@ -150,9 +153,11 @@ public class ControllerManagerImp implements ControllerManager, InternalUpdate {
 
 		addController(controller.getId(), controller);
 
-		this.getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("added controller %s",
 						new Object[] { classType.getSimpleName() }));
+		}
 		
 		return this.getCurrent();
 	}
@@ -168,12 +173,16 @@ public class ControllerManagerImp implements ControllerManager, InternalUpdate {
 	}
 
 	public boolean contains(String id) {
-		boolean result = this.mappedControllers.containsKey(id);
+		ControllerID controllerID = new ControllerID(id);
+		boolean result = this.mappedControllers.containsKey(controllerID);
 		return !result && parent != null ? parent.contains(id) : result;
 	}
 
 	public Controller getController(String id) {
-		Controller controller = (Controller) mappedControllers.get(id);
+		
+		ControllerID controllerID = new ControllerID(id);
+		
+		Controller controller = (Controller) mappedControllers.get(controllerID);
 
 		if (controller == null && parent != null)
 			return parent.getController(id);
@@ -301,11 +310,6 @@ public class ControllerManagerImp implements ControllerManager, InternalUpdate {
 
 	public ControllerManager getParent() {
 		return this.parent;
-	}
-
-	public Logger getLogger() {
-		return LoggerProvider.getCurrentLoggerProvider().getLogger(
-				ControllerBuilder.class);
 	}
 
 	public InterceptorManager getInterceptorManager() {

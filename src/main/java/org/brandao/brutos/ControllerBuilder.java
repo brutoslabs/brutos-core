@@ -59,6 +59,9 @@ public class ControllerBuilder implements ComponentBuilder {
 	 * características mutáveis.
 	 */
 	
+	protected Logger logger = LoggerProvider
+			.getCurrentLoggerProvider().getLogger(ControllerBuilder.class);
+			
 	protected final Controller controller;
 
 	protected ControllerManager controllerManager;
@@ -111,9 +114,11 @@ public class ControllerBuilder implements ComponentBuilder {
 		internalUpdate.addControllerAlias(controller, id);
 		controller.getAlias().add(id);
 		
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("add alias %s on controller %s", new Object[] {
 						id, controller.getClassType().getSimpleName() }));
+		}
 		
 		return this;
 	}
@@ -134,10 +139,12 @@ public class ControllerBuilder implements ComponentBuilder {
 		internalUpdate.removeControllerAlias(controller, id);
 		controller.getAlias().remove(id);
 		
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("removed alias %s on controller %s",
 						new Object[] { id.getName(),
 								controller.getClassType().getSimpleName() }));
+		}
 		return this;
 	}
 	
@@ -228,13 +235,16 @@ public class ControllerBuilder implements ComponentBuilder {
 			throw new MappingException("action not found: \"" + id + "\"");
 
 		controller.setDefaultAction(actionID);
-		getLogger()
-				.info(String
+		
+		if(logger.isTraceEnabled()) {
+			logger
+				.trace(String
 						.format("adding default action %s on controller %s",
 								new Object[] {
 										id,
 										controller.getClassType()
 												.getSimpleName() }));
+		}
 
 		
 		return this;
@@ -287,9 +297,11 @@ public class ControllerBuilder implements ComponentBuilder {
 		BeanBuilder mb = new BeanBuilder(mappingBean, controller, this,
 				validatorFactory, applicationContext);
 
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("added bean %s[%s]",
 						new Object[] { name, target.getSimpleName() }));
+		}
 		
 		return mb;
 	}
@@ -383,14 +395,15 @@ public class ControllerBuilder implements ComponentBuilder {
 			.setResultRendered(resultRendered)
 			.setView(view, resolvedView);
 
-		getLogger()
-				.info(String
+		if(logger.isTraceEnabled()) {
+			logger
+				.trace(String
 						.format("adding action %s on controller %s",
 								new Object[] {
 										action.getId(),
 										this.controller.getClassType()
 												.getSimpleName() }));
-
+		}
 		return actionBuilder;
 	}
 
@@ -432,14 +445,16 @@ public class ControllerBuilder implements ComponentBuilder {
 			it.getProperties().put(key, value);
 		}
 
-		getLogger()
-				.info(String
+		if(logger.isTraceEnabled()) {
+			logger
+				.trace(String
 						.format("adding interceptor %s on controller %s",
 								new Object[] {
 										name,
 										this.controller.getClassType()
 												.getSimpleName() }));
-
+		}
+		
 		controller.addInterceptor(it);
 
 		return new InterceptorBuilder(it, interceptorManager);
@@ -670,13 +685,15 @@ public class ControllerBuilder implements ComponentBuilder {
 
 		controller.addProperty(property);
 
-		getLogger()
-				.info(String
+		if(logger.isTraceEnabled()) {
+			logger
+				.trace(String
 						.format("adding property %s on controller %s",
 								new Object[] {
 										propertyName,
 										this.controller.getClassType()
 												.getSimpleName() }));
+		}
 
 		return new PropertyBuilder(property, this, this.validatorFactory);
 	}
@@ -742,14 +759,16 @@ public class ControllerBuilder implements ComponentBuilder {
 
 		controller.setActionId(value);
 
-		getLogger()
-				.info(String
+		if(logger.isTraceEnabled()) {
+			logger
+				.trace(String
 						.format("override the action id to %s on controller %s",
 								new Object[] {
 										value,
 										this.controller.getClassType()
 												.getSimpleName() }));
-
+		}
+		
 		return this;
 	}
 
@@ -775,11 +794,6 @@ public class ControllerBuilder implements ComponentBuilder {
 
 	public DispatcherType getDispatcherType() {
 		return this.controller.getDispatcherType();
-	}
-
-	protected Logger getLogger() {
-		return LoggerProvider.getCurrentLoggerProvider().getLogger(
-				ControllerBuilder.class);
 	}
 
 	public ControllerBuilder setActionType(ActionType actionType) {

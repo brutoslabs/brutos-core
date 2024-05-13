@@ -34,6 +34,9 @@ import org.brandao.brutos.mapping.StringUtil;
  */
 public class InterceptorManagerImp implements InterceptorManager {
 
+	private Logger logger = LoggerProvider
+			.getCurrentLoggerProvider().getLogger(InterceptorManager.class);
+	
 	private Map<String, Interceptor> interceptors;
 
 	private Map<Class<?>, Interceptor> reverseInterceptors;
@@ -75,7 +78,9 @@ public class InterceptorManagerImp implements InterceptorManager {
 		in.setProperties(new HashMap<String, Object>());
 		interceptors.put(name, in);
 
-		getLogger().info("adding interceptor stack " + name);
+		if(logger.isTraceEnabled()) {
+			logger.trace("adding interceptor stack " + name);
+		}
 
 		return new InterceptorStackBuilder(in, this);
 	}

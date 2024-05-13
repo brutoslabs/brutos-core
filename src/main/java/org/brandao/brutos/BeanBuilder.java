@@ -28,6 +28,9 @@ import org.brandao.brutos.type.Type;
  */
 public class BeanBuilder implements ComponentBuilder{
 
+	public Logger logger = LoggerProvider
+			.getCurrentLoggerProvider().getLogger(ControllerBuilder.class);
+	
 	private Controller controller;
 
 	private ControllerBuilder controllerBuilder;
@@ -53,29 +56,35 @@ public class BeanBuilder implements ComponentBuilder{
 	}
 
 	public BeanBuilder setFactory(String factory) {
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("%s defined factory %s",
 						new Object[] { this.getPrefixLogger(), factory }));
+		}
 		mappingBean.setFactory(factory);
 		return this;
 	}
 
 	public BeanBuilder setMethodfactory(String methodFactory) {
 
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("%s defined method factory %s", new Object[] {
 						this.getPrefixLogger(), methodFactory }));
-
+		}
+		
 		mappingBean.setMethodfactory(methodFactory);
 		return this;
 	}
 
 	public BeanBuilder setSeparator(String separator) {
 
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("%s separator defined to %s",
 						new Object[] { this.getPrefixLogger(), separator }));
-
+		}
+		
 		mappingBean.setSeparator(separator);
 		return this;
 	}
@@ -517,10 +526,12 @@ public class BeanBuilder implements ComponentBuilder{
 						generic, type, classType, this.mappingBean, fetchType,
 						this.validatorFactory, this.controller);
 
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format("%s added property %s",
 						new Object[] { this.getPrefixLogger(), propertyName }));
-
+		}
+		
 		Configuration validatorConfig = new Configuration();
 		propertyBean.setValidator(this.validatorFactory
 				.getValidator(validatorConfig));
@@ -578,11 +589,6 @@ public class BeanBuilder implements ComponentBuilder{
 
 	protected String getPrefixLogger() {
 		return this.mappingBean.getName() + ":";
-	}
-
-	protected Logger getLogger() {
-		return LoggerProvider.getCurrentLoggerProvider().getLogger(
-				ControllerBuilder.class);
 	}
 
 	public ComponentBuilder getParentBuilder() {

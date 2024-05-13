@@ -20,7 +20,6 @@ package org.brandao.brutos;
 import java.util.Iterator;
 import java.util.List;
 
-import org.brandao.brutos.logger.Logger;
 import org.brandao.brutos.mapping.Controller;
 import org.brandao.brutos.mapping.ControllerID;
 
@@ -69,7 +68,7 @@ public interface ControllerManager {
 
 	ControllerManager getParent();
 
-	Logger getLogger();
+	//Logger getLogger();
 
 	InterceptorManager getInterceptorManager();
 

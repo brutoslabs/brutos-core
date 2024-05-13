@@ -30,6 +30,10 @@ import org.brandao.brutos.logger.LoggerProvider;
  */
 public class Scopes {
 
+	private Logger logger = 
+			LoggerProvider.getCurrentLoggerProvider()
+			.getLogger(Scopes.class);
+	
 	private Map<String, Scope> scopes;
 
 	public Scopes() {
@@ -44,8 +48,8 @@ public class Scopes {
 		if (scope == null)
 			throw new NullPointerException("scope");
 
-		if (getLogger().isInfoEnabled())
-			getLogger().info(
+		if (logger.isTraceEnabled())
+			logger.trace(
 					(scopes.containsKey(id) ? "override scope "
 							: "adding scope ") + id);
 
@@ -57,8 +61,8 @@ public class Scopes {
 		if (id == null)
 			throw new NullPointerException("id");
 
-		if (getLogger().isInfoEnabled())
-			getLogger().info("removed scope: " + id);
+		if (logger.isTraceEnabled())
+			logger.trace("removed scope: " + id);
 
 		scopes.remove(id);
 	}
@@ -77,11 +81,6 @@ public class Scopes {
 
 	void clear() {
 		scopes.clear();
-	}
-
-	public Logger getLogger() {
-		return LoggerProvider.getCurrentLoggerProvider().getLogger(
-				Scopes.class.getName());
 	}
 
 	public static Scope getCurrentScope(ScopeType value) {

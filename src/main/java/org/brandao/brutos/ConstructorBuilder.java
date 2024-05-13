@@ -33,6 +33,9 @@ import org.brandao.brutos.type.Type;
  */
 public class ConstructorBuilder extends RestrictionBuilder {
 
+	private Logger logger = LoggerProvider
+			.getCurrentLoggerProvider().getLogger(ConstructorBuilder.class);
+	
 	private Bean mappingBean;
 
 	private BeanBuilder beanBuilder;
@@ -204,14 +207,16 @@ public class ConstructorBuilder extends RestrictionBuilder {
 			arg.setType(null);
 		}
 		
-		getLogger().info(
+		if(logger.isTraceEnabled()) {
+			logger.trace(
 				String.format(
 						"%s added constructor arg %s",
 						new Object[] {
 								this.getPrefixLogger(),
 								String.valueOf(this.mappingBean
 										.getConstructor().size()) }));
-
+		}
+		
 		Configuration validatorConfig = new Configuration();
 		arg.setValidator(this.validatorFactory.getValidator(validatorConfig));
 		this.mappingBean.getConstructor().addConstructorArg(arg);
@@ -220,11 +225,6 @@ public class ConstructorBuilder extends RestrictionBuilder {
 
 	protected String getPrefixLogger() {
 		return this.mappingBean.getName() + ":";
-	}
-
-	protected Logger getLogger() {
-		return LoggerProvider.getCurrentLoggerProvider().getLogger(
-				ConstructorBuilder.class);
 	}
 
 	public int getConstructorArgSize() {
