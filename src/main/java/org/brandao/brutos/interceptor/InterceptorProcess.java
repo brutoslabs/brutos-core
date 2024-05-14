@@ -116,8 +116,8 @@ public class InterceptorProcess implements InterceptorStack {
 			interceptor.setProperties(i.getProperties());
 
 		if (interceptor.accept(handler)) {
-			if (logger.isDebugEnabled())
-				logger.debug(this.form.getClassType().getName()
+			if (logger.isTraceEnabled())
+				logger.trace(this.form.getClassType().getName()
 						+ " intercepted by: " + i.getName());
 
 			interceptor.intercepted(this, handler);
@@ -203,6 +203,10 @@ public class InterceptorProcess implements InterceptorStack {
 					(RedirectException)e.getTargetException();
 				stackRequestElement.setView(re.getView());
 				stackRequestElement.setDispatcherType(re.getDispatcher());
+				
+				if(logger.isTraceEnabled()) {
+					logger.trace("redirecting to " + re.getView() + "[" + re.getDispatcher() + "]");
+				}
 			}
 			else{
 				processException(
@@ -224,7 +228,10 @@ public class InterceptorProcess implements InterceptorStack {
 			Throwable e, ResourceAction resourceAction) {
 
 		if(logger.isTraceEnabled()) {
-			logger.trace("action fail", e);
+			logger.trace(
+					"action exception: " + 
+					resourceAction.getController().getClassType().getName() + 
+					(resourceAction.getMethod() == null? "" : resourceAction.getMethod()), e);
 		}
 		
 		Action method = 

@@ -21,10 +21,15 @@ package org.brandao.brutos;
  * 
  * @author Brandao
  */
-public class RedirectException extends BrutosException {
+public class RedirectException 
+	extends BrutosException {
 
+	private static final long serialVersionUID = -4556166153937323817L;
+	
 	private String page;
+	
 	private String view;
+	
 	private DispatcherType dispatcher;
 
 	public RedirectException() {
