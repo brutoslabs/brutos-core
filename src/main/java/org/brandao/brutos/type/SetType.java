@@ -17,6 +17,8 @@
 
 package org.brandao.brutos.type;
 
+import java.util.Set;
+
 /**
  * 
  * @author Brandao
@@ -25,7 +27,7 @@ public class SetType extends AbstractCollectionType {
 
 	@Override
 	protected Class<?> getCollectionClass() {
-		return this.classType == SetType.class ? TypeUtil.getDefaultSetType()
+		return this.classType == Set.class ? TypeUtil.getDefaultSetType()
 				: this.classType;
 	}
 
