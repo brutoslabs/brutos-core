@@ -27,7 +27,7 @@ public interface ObjectFactory {
 
 	Object getBean(String name);
 
-	Object getBean(Class clazz);
+	Object getBean(Class<?> clazz);
 
 	void configure(Properties properties);
 

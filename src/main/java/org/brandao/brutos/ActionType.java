@@ -128,7 +128,7 @@ public class ActionType {
 	
 	/**
 	 * Obtém a identificação do controlador em um formato válido.
-	 * @param classType Nome da classe do controlador.
+	 * @param className Nome da classe do controlador.
 	 */
 	public String getControllerID(String className){
 		throw new UnsupportedOperationException();
