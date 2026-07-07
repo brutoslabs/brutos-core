@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -168,7 +169,11 @@ public class BeanInstance {
 	
 	private void loadMethods(BeanData data, Set<String> transientMethods, Class<?> clazz){
 		
-		Method[] methods = clazz.getMethods();
+		Map<String,Method> map = new HashMap<>();
+		
+		creteInheritanceMethodMapByName(clazz, map);
+		
+		Method[] methods = map.values().stream().toArray(Method[]::new);
 
 		for (int i = 0; i < methods.length; i++) {
 			
@@ -224,6 +229,22 @@ public class BeanInstance {
 			}
 			
 
+		}
+		
+	}
+	
+	private void creteInheritanceMethodMapByName(Class<?> type, Map<String, Method> map){
+		
+		Method[] declaredMethods = type.getDeclaredMethods();
+		
+		Arrays.stream(declaredMethods).forEach((e)->{
+			if(!map.containsKey(e.getName())) {
+				map.put(e.getName(), e);
+			}
+		});
+
+		if(!type.getSuperclass().equals(Object.class)) {
+			creteInheritanceMethodMapByName(type.getSuperclass(), map);
 		}
 		
 	}
