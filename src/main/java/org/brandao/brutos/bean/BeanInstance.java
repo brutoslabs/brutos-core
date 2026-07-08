@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.brandao.brutos.BrutosException;
@@ -169,12 +171,8 @@ public class BeanInstance {
 	
 	private void loadMethods(BeanData data, Set<String> transientMethods, Class<?> clazz){
 		
-		Map<String,Method> map = new HashMap<>();
+		Method[] methods = getMethods(clazz);
 		
-		creteInheritanceMethodMapByName(clazz, map);
-		
-		Method[] methods = map.values().stream().toArray(Method[]::new);
-
 		for (int i = 0; i < methods.length; i++) {
 			
 			Method method = methods[i];
@@ -233,32 +231,151 @@ public class BeanInstance {
 		
 	}
 	
-	private void creteInheritanceMethodMapByName(Class<?> type, Map<String, Method> map){
-		
-		Method[] declaredMethods = type.getDeclaredMethods();
-		
-		Arrays.stream(declaredMethods).forEach((e)->{
-			if(!map.containsKey(e.getName())) {
-				map.put(e.getName(), e);
-			}
-		});
+	private Method[] getMethods(Class<?> type){
 
-		if(!type.getSuperclass().equals(Object.class)) {
-			creteInheritanceMethodMapByName(type.getSuperclass(), map);
+		/*
+		System.out.println(type.getName());
+		System.out.println("**************************************************************");
+		System.out.println("**************************************************************");
+		*/
+		
+		Set<MethodProperty> cache = new HashSet<>();
+		List<MethodProperty> methodsList = new ArrayList<>();
+		
+		List<Class<?>> inheritanceList = new ArrayList<>();
+
+		Class<?> tmp = type;
+		
+		while(!tmp.equals(Object.class)) {
+			inheritanceList.add(tmp);
+			tmp = tmp.getSuperclass();
 		}
 		
+		Collections.reverse(inheritanceList);
+		
+		inheritanceList.forEach((c)->{
+			
+			/*
+			System.out.println("*** " + c.getName());
+			System.out.println("**************************************************************");
+			*/
+			
+			List<MethodProperty> overrideMethods = new ArrayList<>();
+			List<MethodProperty> localMethods = new ArrayList<>();
+			
+			Method[] methods = c.getDeclaredMethods();
+			
+			Arrays.stream(methods).forEach((e)->{
+				
+				MethodProperty mp = new MethodProperty(e);
+				
+				if(!cache.contains(mp)) {
+					//System.out.println("local: " + e.toString());
+					localMethods.add(mp);
+				}
+				else {
+					//System.out.println("override: " + e.toString());
+					overrideMethods.add(mp);
+				}
+				
+			});
+			
+			/*
+			System.out.println("Local:");
+			System.out.println("-------------");
+			localMethods.forEach((e)->{
+				System.out.println(e.getMethod().toString());
+			});
+			
+			System.out.println("Override:");
+			System.out.println("-------------");
+			overrideMethods.forEach((e)->{
+				System.out.println(e.getMethod().toString());
+			});
+			*/
+			
+			methodsList.addAll(overrideMethods);
+			methodsList.addAll(localMethods);
+			
+			cache.addAll(overrideMethods);
+			cache.addAll(localMethods);
+		});
+		
+		Map<String, Method> methods = new HashMap<>();
+		
+		methodsList.stream().forEach((e)->{
+			methods.put(e.getMethod().getName(), e.getMethod());
+		});
+		
+		/*
+		System.out.println("Methods:");
+		System.out.println("-------------");
+		methods.values().forEach((e)->{
+			System.out.println(e.toString());
+		});
+		*/
+		
+		Method[] m = methods.values().stream().toArray(Method[]::new);
+		return m;
 	}
 	
+	public static class MethodProperty {
+		
+		private String name;
+		
+		private Class<?>[] params;
+		
+		private Class<?> returnType;
+		
+		private Method method;
+
+		public MethodProperty(Method method) {
+			super();
+			this.name = method.getName();
+			this.params = method.getParameterTypes();
+			this.returnType = method.getReturnType();
+			this.method = method;
+		}
+
+		public Method getMethod() {
+			return method;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Arrays.hashCode(params);
+			result = prime * result + Objects.hash(name, returnType);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MethodProperty other = (MethodProperty) obj;
+			return Objects.equals(name, other.name) && Arrays.equals(params, other.params)
+					&& Objects.equals(returnType, other.returnType);
+		}
+		
+	}	
 	private boolean isGet(Method method){
 		String methodName = method.getName();
 		
 		return 
 			(
 			methodName.startsWith("get") && 
+			Modifier.isPublic(method.getModifiers()) &&
 			method.getParameterTypes().length == 0 && 
 			method.getReturnType() != void.class) || 
 			(
 			methodName.startsWith("is") && 
+			Modifier.isPublic(method.getModifiers()) &&
 			method.getParameterTypes().length == 0 && 
 			ClassUtil.getWrapper(method.getReturnType()) == Boolean.class
 					);
@@ -269,6 +386,7 @@ public class BeanInstance {
 		
 		return 
 			methodName.startsWith("set") && 
+			Modifier.isPublic(method.getModifiers()) &&
 			method.getParameterTypes().length == 1;
 	}
 	
