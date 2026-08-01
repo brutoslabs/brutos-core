@@ -40,6 +40,12 @@ public class BigDecimalType extends AbstractType implements Type {
 	}
 
 	public void show(MvcResponse response, Object value){
+		
+		if(value instanceof BigDecimal) {
+			BigDecimal tmp = (BigDecimal)value;
+			value = tmp.stripTrailingZeros().toPlainString();
+		}
+		
 		response.process(value);
 	}
 
