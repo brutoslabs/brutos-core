@@ -146,25 +146,33 @@ public class BeanInstance {
 	}
 	
 	private Set<String> getTransientProperties(Class<?> clazz){
-		Set<String> result = new HashSet<String>();
 		
+		Set<String> result = new HashSet<String>();
+		Class<?> tmp = clazz;
+		
+		while(tmp != null && !Object.class.equals(tmp)) {
+			loadTransientProperties(tmp, result);
+			tmp = tmp.getSuperclass();
+		}
+		
+		return result;
+	}
+
+	private void loadTransientProperties(Class<?> clazz, Set<String> set){
 		try{
 			Method method = clazz.getDeclaredMethod("getTransientProperties");
 			if(Modifier.isStatic(method.getModifiers()) && Modifier.isProtected(method.getModifiers())){
 				method.setAccessible(true);
 				String[] properties = (String[]) method.invoke(clazz);
 				if(properties != null){
-					Collections.addAll(result, properties);
+					Collections.addAll(set, properties);
 				}
 			}
-			
-			return result;
 		}
 		catch(InvocationTargetException e){
 			throw new BrutosException(e.getTargetException());
 		}
 		catch(Throwable e){
-			return result;
 		}
 		
 	}
@@ -246,7 +254,7 @@ public class BeanInstance {
 
 		Class<?> tmp = type;
 		
-		while(!tmp.equals(Object.class)) {
+		while(tmp != null && !Object.class.equals(tmp)) {
 			inheritanceList.add(tmp);
 			tmp = tmp.getSuperclass();
 		}
